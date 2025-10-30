@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventHub - All Events</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+        
+        .header p {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .event-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid #667eea;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .event-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin: 0 0 1rem 0;
+        }
+        
+        .event-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .info-icon {
+            width: 16px;
+            height: 16px;
+            fill: #667eea;
+        }
+        
+        .event-description {
+            color: #555;
+            line-height: 1.6;
+            margin: 1rem 0;
+        }
+        
+        .event-type {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .event-votes {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .vote-button {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .vote-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .vote-button:active {
+            transform: translateY(0);
+        }
+        
+        .upvote-btn {
+            color: #48bb78;
+            border: 2px solid #48bb78;
+        }
+        
+        .upvote-btn:hover {
+            background: #48bb78;
+            color: white;
+        }
+        
+        .downvote-btn {
+            color: #f56565;
+            border: 2px solid #f56565;
+        }
+        
+        .downvote-btn:hover {
+            background: #f56565;
+            color: white;
+        }
+        
+        .vote-count {
+            font-weight: bold;
+            margin-left: 0.2rem;
+        }
+        
+        .event-website {
+            margin-top: 1rem;
+        }
+        
+        .website-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .website-link:hover {
+            text-decoration: underline;
+        }
+        
+        .no-events {
+            text-align: center;
+            color: #666;
+            font-size: 1.2rem;
+            margin-top: 3rem;
+        }
+        
+        .stats {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎉 EventHub</h1>
+        <p>Discover amazing events in your area</p>
+    </div>
+    
+    <div class="container">
+        <div class="stats">
+            <h2>📊 Event Statistics</h2>
+            <p><strong th:text="${events.size()}">0</strong> events available</p>
+        </div>
+        
+        <div class="events-grid" th:if="${events != null and not events.empty}">
+            <div class="event-card" th:each="event : ${events}">
+                <h2 class="event-title" th:text="${event.eventName}">Event Name</h2>
+                
+                <div class="event-info">
+                    <div class="info-item">
+                        <svg class="info-icon" viewBox="0 0 24 24">
+                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+                        </svg>
+                        <span th:text="${event.eventDate}">Date</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <svg class="info-icon" viewBox="0 0 24 24">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                            <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                        </svg>
+                        <span th:text="${event.eventStart}">Time</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <svg class="info-icon" viewBox="0 0 24 24">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
+                        <span th:text="${event.eventLocation}">Location</span>
+                    </div>
+                </div>
+                
+                <div class="event-description" th:text="${event.eventDescription}">
+                    Event description goes here...
+                </div>
+                
+                <div class="event-type" th:text="${event.eventType != null ? event.eventType.eventTypeName : 'No Type'}">Event Type</div>
+                
+                <div class="event-votes">
+                    <button class="vote-button upvote-btn" th:onclick="'voteEvent(' + ${event.id} + ', \'upvote\')'">
+                        <span>👍</span>
+                        <span class="vote-count" th:text="${event.eventUpVote != null ? event.eventUpVote : 0}">0</span>
+                    </button>
+                    <button class="vote-button downvote-btn" th:onclick="'voteEvent(' + ${event.id} + ', \'downvote\')'">
+                        <span>👎</span>
+                        <span class="vote-count" th:text="${event.eventDownVote != null ? event.eventDownVote : 0}">0</span>
+                    </button>
+                </div>
+                
+                <div class="event-website" th:if="${event.eventWebsite != null and event.eventWebsite != ''}">
+                    <a th:href="${event.eventWebsite}" target="_blank" class="website-link">
+                        🌐 Visit Website
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="no-events" th:if="${events == null or events.empty}">
+            <p>🚫 No events available at the moment.</p>
+            <p>Check back later for exciting events!</p>
+        </div>
+    </div>
+
+    <script>
+        async function voteEvent(eventId, voteType) {
+            try {
+                const response = await fetch(`/vote/${eventId}/${voteType}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                if (response.ok) {
+                    // Reload the page to show updated vote counts
+                    window.location.reload();
+                } else {
+                    console.error('Failed to vote');
+                    alert('Failed to vote. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error voting:', error);
+                alert('Error occurred while voting. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>

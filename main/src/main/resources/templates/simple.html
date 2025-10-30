@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>EventHub - Simple</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .event { border: 1px solid #ccc; margin: 10px 0; padding: 15px; border-radius: 5px; }
+        .event-title { color: #2c5aa0; margin: 0 0 10px 0; }
+        .event-info { color: #666; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <h1>EventHub - All Events</h1>
+    
+    <div th:if="${events}">
+        <p>Total events: <span th:text="${events.size()}">0</span></p>
+        
+        <div th:each="event : ${events}" class="event">
+            <h3 class="event-title" th:text="${event.eventName}">Event Name</h3>
+            <div class="event-info">
+                <p><strong>Date:</strong> <span th:text="${event.eventDate}">Date</span></p>
+                <p><strong>Location:</strong> <span th:text="${event.eventLocation}">Location</span></p>
+                <p><strong>Description:</strong> <span th:text="${event.eventDescription}">Description</span></p>
+                <div th:if="${event.eventType}">
+                    <p><strong>Type:</strong> <span th:text="${event.eventType.eventTypeName}">Type</span></p>
+                </div>
+                <p><strong>Votes:</strong> 
+                   👍 <span th:text="${event.eventUpVote != null ? event.eventUpVote : 0}">0</span> | 
+                   👎 <span th:text="${event.eventDownVote != null ? event.eventDownVote : 0}">0</span>
+                </p>
+                <div th:if="${event.eventWebsite}">
+                    <p><strong>Website:</strong> <a th:href="${event.eventWebsite}" target="_blank" th:text="${event.eventWebsite}">Website</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div th:unless="${events}">
+        <p>No events available.</p>
+    </div>
+</body>
+</html>
