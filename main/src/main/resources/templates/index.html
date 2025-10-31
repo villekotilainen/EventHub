@@ -17,8 +17,31 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 2rem 0;
-            text-align: center;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 4rem;
+        }
+        
+        .header-right {
+            margin-left: auto;
+            margin-right: 2rem;
+        }
+        
+        .header-left {
+            text-align: left;
+        }
+        
+        .header-right {
+            text-align: right;
         }
         
         .header h1 {
@@ -33,22 +56,41 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 2rem;
         }
         
         .events-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 2rem;
             margin-top: 2rem;
+        }
+        
+        /* Responsive design for smaller screens */
+        @media (max-width: 1400px) {
+            .events-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 1000px) {
+            .events-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 650px) {
+            .events-grid {
+                grid-template-columns: 1fr;
+            }
         }
         
         .event-card {
             background: white;
             border-radius: 12px;
-            padding: 1.5rem;
+            padding: 2rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             border-left: 4px solid #667eea;
@@ -158,6 +200,375 @@
             margin-left: 0.2rem;
         }
         
+        .location-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .location-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        
+        .location-link::after {
+            content: " 🗺️";
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .location-link:hover::after {
+            opacity: 1;
+        }
+        
+        /* Voted button states */
+        .vote-button.voted {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+        
+        .upvote-btn.voted {
+            background: #48bb78;
+            color: white;
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+        }
+        
+        .downvote-btn.voted {
+            background: #f56565;
+            color: white;
+            box-shadow: 0 4px 12px rgba(245, 101, 101, 0.3);
+        }
+        
+        /* Disabled button states */
+        .vote-button:disabled {
+            opacity: 0.4;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+        
+        .vote-button:disabled:hover {
+            transform: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        /* Filter controls styling */
+        .filter-controls {
+            display: flex;
+            align-items: center;
+        }
+        
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .toggle-switch input[type="checkbox"] {
+            display: none;
+        }
+        
+        .toggle-slider {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background-color: #ccc;
+            border-radius: 24px;
+            transition: background-color 0.3s ease;
+            margin-right: 10px;
+        }
+        
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: white;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .toggle-switch input[type="checkbox"]:checked + .toggle-slider {
+            background-color: #667eea;
+        }
+        
+        .toggle-switch input[type="checkbox"]:checked + .toggle-slider::before {
+            transform: translateX(26px);
+        }
+        
+        .toggle-text {
+            font-weight: 500;
+            color: white;
+            opacity: 0.9;
+        }
+        
+        /* Past event styling */
+        .event-card.past-event {
+            opacity: 0.7;
+            border-left-color: #999;
+        }
+        
+        .event-card.past-event .event-title {
+            color: #666;
+        }
+        
+        .event-card.past-event::after {
+            content: "PAST EVENT";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #f56565;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        
+        .event-card {
+            position: relative;
+        }
+        
+        /* Search parameters container */
+        .search-parameters {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .search-parameters h3 {
+            margin: 0;
+            color: #2d3748;
+            font-size: 1.2rem;
+            font-weight: 600;
+            align-self: center;
+        }
+        
+        .search-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: end;
+        }
+        
+        .search-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .search-group label {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1rem;
+        }
+        
+        .search-group input[type="text"] {
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            width: 100%;
+            transition: border-color 0.3s ease;
+        }
+        
+        .search-group input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .date-range input[type="date"] {
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .date-range input[type="date"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .date-separator {
+            color: #666;
+            font-weight: 500;
+            padding: 0 0.5rem;
+        }
+        
+        .search-parameters .filter-controls {
+            display: flex;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+        
+        .search-parameters .toggle-text {
+            color: #555;
+            opacity: 1;
+        }
+        
+        /* Date range picker styles */
+        .date-range-picker {
+            position: relative;
+        }
+        
+        .date-range-picker input[type="text"] {
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            width: 100%;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+        
+        .date-range-picker input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .calendar-popup {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            z-index: 1000;
+            display: none;
+            padding: 1rem;
+            min-width: 280px;
+        }
+        
+        .calendar-popup.active {
+            display: block;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .calendar-nav {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            color: #667eea;
+        }
+        
+        .calendar-nav:hover {
+            background: #f7fafc;
+        }
+        
+        .calendar-title {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            text-align: center;
+        }
+        
+        .calendar-day-header {
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #666;
+        }
+        
+        .calendar-day {
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        
+        .calendar-day:hover {
+            background: #e6f3ff;
+        }
+        
+        .calendar-day.selected {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+        }
+        
+        .calendar-day.in-range {
+            background: rgba(102, 126, 234, 0.2);
+            color: #2d3748;
+        }
+        
+        .calendar-day.other-month {
+            color: #ccc;
+        }
+        
+        .calendar-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .calendar-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        
+        .calendar-btn.clear {
+            background: #f7fafc;
+            color: #666;
+        }
+        
+        .calendar-btn.clear:hover {
+            background: #e2e8f0;
+        }
+        
+        .calendar-btn.apply {
+            background: #667eea;
+            color: white;
+        }
+        
+        .calendar-btn.apply:hover {
+            background: #5a67d8;
+        }
+        
         .event-website {
             margin-top: 1rem;
         }
@@ -180,25 +591,234 @@
         }
         
         .stats {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            color: white;
+        }
+        
+        .stats h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 300;
+        }
+        
+        .stats p {
+            margin: 0;
+            opacity: 0.9;
+        }
+        
+        /* All controls in one row - responsive layout */
+        .all-controls {
+            display: grid;
+            grid-template-columns: minmax(200px, auto) minmax(250px, 1fr) minmax(200px, auto) minmax(180px, auto);
+            gap: 1.5rem;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            min-width: 0; /* Allow shrinking */
+        }
+        
+        /* Right-aligned toggle */
+        .control-group.toggle-right {
+            justify-self: end;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            .all-controls {
+                grid-template-columns: minmax(180px, auto) minmax(200px, 1fr) minmax(180px, auto) auto;
+                gap: 1rem;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .all-controls {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto auto;
+                gap: 1rem;
+            }
+            
+            .control-group:nth-child(1) { grid-column: 1; grid-row: 1; }
+            .control-group:nth-child(2) { grid-column: 2; grid-row: 1; }
+            .control-group:nth-child(3) { grid-column: 1; grid-row: 2; }
+            .control-group.toggle-right { 
+                grid-column: 2; 
+                grid-row: 2; 
+                justify-self: end;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .all-controls {
+                grid-template-columns: 1fr;
+                grid-template-rows: repeat(4, auto);
+                gap: 0.75rem;
+                justify-items: center;
+            }
+            
+            .control-group:nth-child(1) { grid-row: 1; }
+            .control-group:nth-child(2) { grid-row: 2; }
+            .control-group:nth-child(3) { grid-row: 3; }
+            .control-group.toggle-right { 
+                grid-row: 4; 
+                justify-self: center;
+            }
+            
+            .control-group {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+        
+        /* Sort dropdown styling */
+        .control-group select {
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
             background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+            height: 3.25rem;
+            width: 100%;
+            max-width: 220px;
+            min-width: 180px;
+        }
+        
+        .control-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .control-group select:hover {
+            border-color: #cbd5e0;
+        }
+        
+        /* Toggle switch styling - minimal design */
+        .control-group .toggle-switch {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .control-group .toggle-switch input[type="checkbox"] {
+            display: none;
+        }
+        
+        .control-group .toggle-slider {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background-color: #ccc;
+            border-radius: 24px;
+            transition: background-color 0.3s ease;
+            margin-right: 10px;
+        }
+        
+        .control-group .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: white;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .control-group .toggle-switch input[type="checkbox"]:checked + .toggle-slider {
+            background-color: #667eea;
+        }
+        
+        .control-group .toggle-switch input[type="checkbox"]:checked + .toggle-slider::before {
+            transform: translateX(26px);
+        }
+        
+        .control-group .toggle-text {
+            font-weight: 500;
+            color: #555;
+            opacity: 1;
+        }
+        
+        /* Search input styling */
+        .control-group input[type="text"] {
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            height: 3.25rem;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+            width: 100%;
+            min-width: 200px;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>🎉 EventHub</h1>
-        <p>Discover amazing events in your area</p>
+        <div class="header-content">
+            <div class="header-left">
+                <h1>🎉 EventHub</h1>
+                <p>Discover amazing events in your area</p>
+            </div>
+            
+            <div class="header-right">
+                <div class="stats">
+                    <div>
+                        <h2>📊 Event Statistics</h2>
+                        <p><strong th:text="${events.size()}">0</strong> events available</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     
     <div class="container">
-        <div class="stats">
-            <h2>📊 Event Statistics</h2>
-            <p><strong th:text="${events.size()}">0</strong> events available</p>
+        <div class="search-parameters">
+            <div class="all-controls">
+                <!-- Sort Bar -->
+                <div class="control-group">
+                    <select id="sortBy">
+                        <option value="date-asc">Date (Ascending)</option>
+                        <option value="date-desc">Date (Descending)</option>
+                        <option value="most-liked">Most Liked</option>
+                        <option value="least-liked">Least Liked</option>
+                        <option value="event-type">Event Type</option>
+                    </select>
+                </div>
+                
+                <!-- Search Events -->
+                <div class="control-group">
+                    <input type="text" id="textSearch" placeholder="Search by name, location or type..." />
+                </div>
+                
+                <!-- Search by date -->
+                <div class="control-group">
+                    <div class="date-range-picker">
+                        <input type="text" id="dateRange" placeholder="Select date range..." readonly />
+                        <div id="dateRangeCalendar" class="calendar-popup"></div>
+                    </div>
+                </div>
+                
+                <!-- Show Past Events Toggle - on the right -->
+                <div class="control-group toggle-right">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="showPastEvents" />
+                        <span class="toggle-slider"></span>
+                        <span class="toggle-text">Show Past Events</span>
+                    </label>
+                </div>
+            </div>
         </div>
         
         <div class="events-grid" th:if="${events != null and not events.empty}">
@@ -210,7 +830,7 @@
                         <svg class="info-icon" viewBox="0 0 24 24">
                             <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
                         </svg>
-                        <span th:text="${event.eventDate}">Date</span>
+                        <span th:text="${#temporals.format(event.eventDate, 'dd.MM.yyyy')}" th:data-raw-date="${event.eventDate}">Date</span>
                     </div>
                     
                     <div class="info-item">
@@ -218,14 +838,17 @@
                             <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
                             <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
                         </svg>
-                        <span th:text="${event.eventStart}">Time</span>
+                        <span th:text="${#temporals.format(event.eventStart, 'HH:mm')}">Time</span>
                     </div>
                     
                     <div class="info-item">
                         <svg class="info-icon" viewBox="0 0 24 24">
                             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
                         </svg>
-                        <span th:text="${event.eventLocation}">Location</span>
+                        <a th:href="'https://www.google.com/maps/search/' + ${event.eventLocation}" 
+                           target="_blank" 
+                           class="location-link" 
+                           th:text="${event.eventLocation}">Location</a>
                     </div>
                 </div>
                 
@@ -261,7 +884,53 @@
     </div>
 
     <script>
+        // Voting system - localStorage based vote tracking
+        function hasUserVoted(eventId) {
+            const votedEvents = JSON.parse(localStorage.getItem('votedEvents') || '{}');
+            return votedEvents[eventId] !== undefined;
+        }
+        
+        function getUserVoteType(eventId) {
+            const votedEvents = JSON.parse(localStorage.getItem('votedEvents') || '{}');
+            return votedEvents[eventId];
+        }
+        
+        function storeUserVote(eventId, voteType) {
+            const votedEvents = JSON.parse(localStorage.getItem('votedEvents') || '{}');
+            votedEvents[eventId] = voteType;
+            localStorage.setItem('votedEvents', JSON.stringify(votedEvents));
+        }
+        function updateButtonStates() {
+            document.querySelectorAll('.event-card').forEach(card => {
+                const upvoteBtn = card.querySelector('.upvote-btn');
+                const downvoteBtn = card.querySelector('.downvote-btn');
+                
+                if (upvoteBtn && downvoteBtn) {
+                    const eventId = upvoteBtn.onclick.toString().match(/\d+/)[0];
+                    const userVote = getUserVoteType(eventId);
+                    
+                    upvoteBtn.classList.remove('voted');
+                    downvoteBtn.classList.remove('voted');
+                    upvoteBtn.disabled = false;
+                    downvoteBtn.disabled = false;
+                    
+                    if (userVote === 'upvote') {
+                        upvoteBtn.classList.add('voted');
+                        downvoteBtn.disabled = true;
+                    } else if (userVote === 'downvote') {
+                        downvoteBtn.classList.add('voted');
+                        upvoteBtn.disabled = true;
+                    }
+                }
+            });
+        }
+        
         async function voteEvent(eventId, voteType) {
+            if (hasUserVoted(eventId)) {
+                alert('You have already voted for this event!');
+                return;
+            }
+            
             try {
                 const response = await fetch(`/vote/${eventId}/${voteType}`, {
                     method: 'POST',
@@ -271,7 +940,7 @@
                 });
                 
                 if (response.ok) {
-                    // Reload the page to show updated vote counts
+                    storeUserVote(eventId, voteType);
                     window.location.reload();
                 } else {
                     console.error('Failed to vote');
@@ -282,6 +951,382 @@
                 alert('Error occurred while voting. Please try again.');
             }
         }
+        
+        function isEventInPast(eventDate) {
+            const today = new Date();
+            const eventDateObj = parseDateSafely(eventDate);
+            
+            const todayString = getDateString(today);
+            const eventDateString = getDateString(eventDateObj);
+            
+            return eventDateString < todayString;
+        }
+        
+        // Calendar state
+        let selectedStartDate = null;
+        let selectedEndDate = null;
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        let totalEventCount = 0;
+        
+        function getSearchCriteria() {
+            return {
+                textSearch: document.getElementById('textSearch').value.toLowerCase(),
+                dateFrom: selectedStartDate ? getDateString(selectedStartDate) : null,
+                dateTo: selectedEndDate ? getDateString(selectedEndDate) : null,
+                showPastEvents: document.getElementById('showPastEvents').checked
+            };
+        }
+        
+        function matchesTextSearch(card, searchText) {
+            if (!searchText) return true;
+            
+            const eventName = card.querySelector('.event-title').textContent.toLowerCase();
+            const eventLocation = card.querySelector('.location-link').textContent.toLowerCase();
+            const eventType = card.querySelector('.event-type').textContent.toLowerCase();
+            const eventDescription = card.querySelector('.event-description').textContent.toLowerCase();
+            
+            return eventName.includes(searchText) || 
+                   eventLocation.includes(searchText) || 
+                   eventType.includes(searchText) ||
+                   eventDescription.includes(searchText);
+        }
+        
+        function parseDateSafely(dateString) {
+            if (dateString.includes('T')) {
+                dateString = dateString.split('T')[0];
+            }
+            
+            const parts = dateString.split('-');
+            if (parts.length === 3) {
+                const year = parseInt(parts[0]);
+                const month = parseInt(parts[1]) - 1;
+                const day = parseInt(parts[2]);
+                return new Date(year, month, day);
+            }
+            
+            return new Date(dateString);
+        }
+        
+        function getDateString(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        function matchesDateRange(eventDate, dateFrom, dateTo) {
+            if (!dateFrom && !dateTo) return true;
+            
+            const eventDateObj = parseDateSafely(eventDate);
+            const fromDateObj = dateFrom ? parseDateSafely(dateFrom) : null;
+            const toDateObj = dateTo ? parseDateSafely(dateTo) : null;
+            
+            if (fromDateObj && !toDateObj) {
+                const eventDateString = getDateString(eventDateObj);
+                const fromDateString = getDateString(fromDateObj);
+                return eventDateString === fromDateString;
+            }
+            
+            if (fromDateObj && eventDateObj < fromDateObj) return false;
+            if (toDateObj && eventDateObj > toDateObj) return false;
+            
+            return true;
+        }
+        
+        // Filter events based on all criteria
+        function filterEvents() {
+            const criteria = getSearchCriteria();
+            const eventCards = document.querySelectorAll('.event-card');
+            let visibleCount = 0;
+            
+            eventCards.forEach(card => {
+                // Find the date span in this card and get the raw date from data attribute
+                const dateSpan = card.querySelector('.info-item span[data-raw-date]');
+                if (dateSpan) {
+                    const eventDate = dateSpan.getAttribute('data-raw-date');
+                    const isPast = isEventInPast(eventDate);
+                    
+                    // Check all filter criteria
+                    const matchesText = matchesTextSearch(card, criteria.textSearch);
+                    const matchesDate = matchesDateRange(eventDate, criteria.dateFrom, criteria.dateTo);
+                    const showThisEvent = criteria.showPastEvents || !isPast;
+                    
+                    // Apply past event styling
+                    if (isPast) {
+                        card.classList.add('past-event');
+                    } else {
+                        card.classList.remove('past-event');
+                    }
+                    
+                    // Show/hide card based on all criteria
+                    if (matchesText && matchesDate && showThisEvent) {
+                        card.style.display = 'block';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            });
+            
+            // Apply sorting after filtering
+            sortEvents();
+        }
+        
+        function sortEvents() {
+            const sortBy = document.getElementById('sortBy').value;
+            const eventsGrid = document.querySelector('.events-grid');
+            const eventCards = Array.from(eventsGrid.querySelectorAll('.event-card'));
+            
+            // Only sort visible events
+            const visibleCards = eventCards.filter(card => card.style.display !== 'none');
+            
+            visibleCards.sort((a, b) => {
+                switch (sortBy) {
+                    case 'date-desc':
+                        return getEventDate(b) - getEventDate(a);
+                    case 'date-asc':
+                        return getEventDate(a) - getEventDate(b);
+                    case 'most-liked':
+                        return getEventLikes(b) - getEventLikes(a);
+                    case 'least-liked':
+                        return getEventLikes(a) - getEventLikes(b);
+                    case 'event-type':
+                        return getEventType(a).localeCompare(getEventType(b));
+                    default:
+                        return 0;
+                }
+            });
+            
+            // Reorder the visible cards in the DOM
+            visibleCards.forEach(card => {
+                eventsGrid.appendChild(card);
+            });
+        }
+        
+        function getEventDate(card) {
+            const dateSpan = card.querySelector('.info-item span[data-raw-date]');
+            return dateSpan ? parseDateSafely(dateSpan.getAttribute('data-raw-date')) : new Date(0);
+        }
+        
+        function getEventLikes(card) {
+            const upvoteBtn = card.querySelector('.upvote-btn .vote-count');
+            const downvoteBtn = card.querySelector('.downvote-btn .vote-count');
+            const upvotes = upvoteBtn ? parseInt(upvoteBtn.textContent) || 0 : 0;
+            const downvotes = downvoteBtn ? parseInt(downvoteBtn.textContent) || 0 : 0;
+            return upvotes - downvotes; // Net likes
+        }
+        
+        function getEventType(card) {
+            const eventTypeElement = card.querySelector('.event-type');
+            return eventTypeElement ? eventTypeElement.textContent : '';
+        }
+        
+        // Calendar functionality
+        function createCalendar() {
+            const calendar = document.getElementById('dateRangeCalendar');
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'];
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            const lastDay = new Date(currentYear, currentMonth + 1, 0);
+            const startDate = new Date(firstDay);
+            startDate.setDate(startDate.getDate() - firstDay.getDay());
+            
+            calendar.innerHTML = `
+                <div class="calendar-header">
+                    <button class="calendar-nav" onclick="changeMonth(-1, event)">❮</button>
+                    <div class="calendar-title">${monthNames[currentMonth]} ${currentYear}</div>
+                    <button class="calendar-nav" onclick="changeMonth(1, event)">❯</button>
+                </div>
+                <div class="calendar-grid">
+                    ${dayNames.map(day => `<div class="calendar-day-header">${day}</div>`).join('')}
+                    ${Array.from({length: 42}, (_, i) => {
+                        const date = new Date(startDate);
+                        date.setDate(startDate.getDate() + i);
+                        const isCurrentMonth = date.getMonth() === currentMonth;
+                        const isSelected = (selectedStartDate && date.toDateString() === selectedStartDate.toDateString()) ||
+                                         (selectedEndDate && date.toDateString() === selectedEndDate.toDateString());
+                        const isInRange = selectedStartDate && selectedEndDate && 
+                                        date > selectedStartDate && date < selectedEndDate;
+                        
+                        const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                        return `<div class="calendar-day ${!isCurrentMonth ? 'other-month' : ''} 
+                                    ${isSelected ? 'selected' : ''} ${isInRange ? 'in-range' : ''}"
+                                    onclick="selectDate('${dateString}', event)">${date.getDate()}</div>`;
+                    }).join('')}
+                </div>
+                <div class="calendar-actions">
+                    <button class="calendar-btn clear" onclick="clearDateRange(event)">Clear</button>
+                    <button class="calendar-btn apply" onclick="applyDateRange(event)">Apply</button>
+                </div>
+            `;
+        }
+        
+        function changeMonth(direction, event) {
+            if (event) {
+                event.stopPropagation(); // Prevent event bubbling
+            }
+            
+            currentMonth += direction;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            createCalendar();
+        }
+        
+        function selectDate(dateString, event) {
+            if (event) {
+                event.stopPropagation(); // Prevent event bubbling to document click handler
+            }
+            
+            // Create date properly to avoid timezone issues
+            const dateParts = dateString.split('-');
+            const date = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
+            
+            if (!selectedStartDate || (selectedStartDate && selectedEndDate)) {
+                selectedStartDate = date;
+                selectedEndDate = null;
+            } else if (date < selectedStartDate) {
+                selectedEndDate = selectedStartDate;
+                selectedStartDate = date;
+            } else {
+                selectedEndDate = date;
+            }
+            
+            createCalendar();
+        }
+        
+        function clearDateRange(event) {
+            if (event) {
+                event.stopPropagation(); 
+            }
+            
+            selectedStartDate = null;
+            selectedEndDate = null;
+            document.getElementById('dateRange').value = '';
+            createCalendar();
+            filterEvents();
+        }
+        
+        function applyDateRange(event) {
+            if (event) {
+                event.stopPropagation(); // Prevent event bubbling
+            }
+            
+            const dateRangeInput = document.getElementById('dateRange');
+            if (selectedStartDate && selectedEndDate) {
+                const startStr = selectedStartDate.toLocaleDateString('en-GB');
+                const endStr = selectedEndDate.toLocaleDateString('en-GB');
+                dateRangeInput.value = `${startStr} - ${endStr}`;
+            } else if (selectedStartDate) {
+                dateRangeInput.value = selectedStartDate.toLocaleDateString('en-GB');
+            }
+            
+            // Calendar stays open - removed classList.remove('active')
+            filterEvents();
+        }
+        
+        // Restore date selection from input field value (for page refresh UX)
+        function restoreDateSelectionFromInput() {
+            const dateRangeInput = document.getElementById('dateRange');
+            if (dateRangeInput && dateRangeInput.value) {
+                const value = dateRangeInput.value.trim();
+                
+                if (value.includes(' - ')) {
+                    const [startStr, endStr] = value.split(' - ');
+                    selectedStartDate = parseDateFromDisplayFormat(startStr);
+                    selectedEndDate = parseDateFromDisplayFormat(endStr);
+                } else if (value) {
+                    selectedStartDate = parseDateFromDisplayFormat(value);
+                    selectedEndDate = null;
+                }
+                
+                // Update calendar to show the restored date selection
+                if (selectedStartDate) {
+                    currentMonth = selectedStartDate.getMonth();
+                    currentYear = selectedStartDate.getFullYear();
+                }
+            }
+        }
+        
+        // Parse date from display format (dd.MM.yyyy or dd/MM/yyyy) back to Date object
+        function parseDateFromDisplayFormat(dateStr) {
+            // Handle case where dateStr might be an array (shouldn't happen but let's be safe)
+            if (Array.isArray(dateStr)) {
+                dateStr = dateStr[0];
+            }
+            
+            // Try both dot and slash separators
+            let parts = dateStr.split('.');
+            if (parts.length !== 3) {
+                parts = dateStr.split('/');
+            }
+            
+            if (parts.length === 3) {
+                const day = parseInt(parts[0]);
+                const month = parseInt(parts[1]) - 1; // Month is 0-indexed
+                const year = parseInt(parts[2]);
+                return new Date(year, month, day);
+            }
+            return null;
+        }
+        
+        // Initialize button states when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            updateButtonStates();
+            
+            // Store the total event count so stats always show total, not filtered count
+            totalEventCount = document.querySelectorAll('.event-card').length;
+            
+            // Restore date selection if input field has value (after page refresh)
+            restoreDateSelectionFromInput();
+            
+            // Set up event listeners for all search inputs
+            const textSearch = document.getElementById('textSearch');
+            const dateRangeInput = document.getElementById('dateRange');
+            const showPastEventsToggle = document.getElementById('showPastEvents');
+            const sortBy = document.getElementById('sortBy');
+            
+            if (textSearch) {
+                textSearch.addEventListener('input', filterEvents);
+            }
+            
+            if (dateRangeInput) {
+                dateRangeInput.addEventListener('click', function() {
+                    const calendar = document.getElementById('dateRangeCalendar');
+                    calendar.classList.toggle('active');
+                    if (calendar.classList.contains('active')) {
+                        createCalendar();
+                    }
+                });
+            }
+            
+            if (showPastEventsToggle) {
+                showPastEventsToggle.addEventListener('change', filterEvents);
+            }
+            
+            if (sortBy) {
+                sortBy.addEventListener('change', sortEvents);
+            }
+            
+            // Close calendar when clicking outside
+            document.addEventListener('click', function(e) {
+                const dateRangePicker = document.querySelector('.date-range-picker');
+                const calendar = document.getElementById('dateRangeCalendar');
+                if (!dateRangePicker.contains(e.target)) {
+                    calendar.classList.remove('active');
+                }
+            });
+            
+            // Run initial filter (past events hidden by default)
+            filterEvents();
+        });
     </script>
 </body>
 </html>

@@ -1,7 +1,9 @@
 package eventhub.main.web;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import eventhub.main.domain.Event;
 import eventhub.main.repositories.EventRepository;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class HomeController {
@@ -34,13 +37,6 @@ public class HomeController {
         model.addAttribute("events", events);
         return "index";
     }
-    
-    @GetMapping("/simple")
-    public String simplePage(Model model) {
-        List<Event> events = eventRepository.findAll();
-        model.addAttribute("events", events);
-        return "simple";
-    }
 
     @RequestMapping("/index")
     public String home(Model model) {
@@ -50,13 +46,29 @@ public class HomeController {
     }
 
     @PostMapping("/vote/{eventId}/upvote")
-    public ResponseEntity<String> upvoteEvent(@PathVariable Long eventId) {
+    public ResponseEntity<String> upvoteEvent(@PathVariable Long eventId, HttpSession session) {
+        // Check if user has already voted for this event
+        @SuppressWarnings("unchecked")
+        Set<Long> votedEvents = (Set<Long>) session.getAttribute("votedEvents");
+        if (votedEvents == null) {
+            votedEvents = new HashSet<>();
+        }
+        
+        if (votedEvents.contains(eventId)) {
+            return ResponseEntity.badRequest().body("You have already voted for this event");
+        }
+        
         Optional<Event> eventOptional = eventRepository.findById(eventId);
         if (eventOptional.isPresent()) {
             Event event = eventOptional.get();
             Integer currentUpvotes = event.getEventUpVote();
             event.setEventUpVote(currentUpvotes != null ? currentUpvotes + 1 : 1);
             eventRepository.save(event);
+            
+            // Mark this event as voted by this session
+            votedEvents.add(eventId);
+            session.setAttribute("votedEvents", votedEvents);
+            
             return ResponseEntity.ok("Upvote successful");
         } else {
             return ResponseEntity.notFound().build();
@@ -64,13 +76,29 @@ public class HomeController {
     }
 
     @PostMapping("/vote/{eventId}/downvote")
-    public ResponseEntity<String> downvoteEvent(@PathVariable Long eventId) {
+    public ResponseEntity<String> downvoteEvent(@PathVariable Long eventId, HttpSession session) {
+        // Check if user has already voted for this event
+        @SuppressWarnings("unchecked")
+        Set<Long> votedEvents = (Set<Long>) session.getAttribute("votedEvents");
+        if (votedEvents == null) {
+            votedEvents = new HashSet<>();
+        }
+        
+        if (votedEvents.contains(eventId)) {
+            return ResponseEntity.badRequest().body("You have already voted for this event");
+        }
+        
         Optional<Event> eventOptional = eventRepository.findById(eventId);
         if (eventOptional.isPresent()) {
             Event event = eventOptional.get();
             Integer currentDownvotes = event.getEventDownVote();
             event.setEventDownVote(currentDownvotes != null ? currentDownvotes + 1 : 1);
             eventRepository.save(event);
+            
+            // Mark this event as voted by this session
+            votedEvents.add(eventId);
+            session.setAttribute("votedEvents", votedEvents);
+            
             return ResponseEntity.ok("Downvote successful");
         } else {
             return ResponseEntity.notFound().build();

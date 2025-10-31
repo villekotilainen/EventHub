@@ -81,18 +81,83 @@ public class MainApplication {
 			EHUser regularUser2 = new EHUser("user2", "password123", "Bob", "Smith", "bob@example.com", userRole);
 			ehUserRepository.save(regularUser2);
 			
-			// Create event types
+			// Hardcoded event types
+
 			EventType techEvent = new EventType("Technology", "Technology related events, conferences, and meetups");
 			eventTypeRepository.save(techEvent);
-			
-			EventType musicEvent = new EventType("Music", "Concerts, festivals, and music performances");
+
+			EventType musicEvent = new EventType("Music", "General music-related events and performances");
 			eventTypeRepository.save(musicEvent);
-			
+
+			EventType concertEvent = new EventType("Concert", "Live performances by artists or bands");
+			eventTypeRepository.save(concertEvent);
+
+			EventType musicFestivalEvent = new EventType("Music Festival", "Multi-day festivals featuring multiple artists and genres");
+			eventTypeRepository.save(musicFestivalEvent);
+
 			EventType sportsEvent = new EventType("Sports", "Sports events, tournaments, and competitions");
 			eventTypeRepository.save(sportsEvent);
-			
+
 			EventType businessEvent = new EventType("Business", "Business conferences, networking events, and seminars");
 			eventTypeRepository.save(businessEvent);
+
+			EventType artExhibition = new EventType("Art Exhibition", "Visual art displays, galleries, and exhibitions");
+			eventTypeRepository.save(artExhibition);
+
+			EventType theaterEvent = new EventType("Theater", "Plays, musicals, and live drama performances");
+			eventTypeRepository.save(theaterEvent);
+
+			EventType communityEvent = new EventType("Community", "Local fairs, markets, and neighborhood gatherings");
+			eventTypeRepository.save(communityEvent);
+
+			EventType educationEvent = new EventType("Education", "Workshops, lectures, and training sessions");
+			eventTypeRepository.save(educationEvent);
+
+			EventType foodFestival = new EventType("Food Festival", "Culinary events celebrating food and drink");
+			eventTypeRepository.save(foodFestival);
+
+			EventType charityEvent = new EventType("Charity", "Fundraisers, donation drives, and benefit events");
+			eventTypeRepository.save(charityEvent);
+
+			EventType gamingEvent = new EventType("Gaming", "Esports tournaments, LAN parties, and gaming conventions");
+			eventTypeRepository.save(gamingEvent);
+
+			EventType filmFestival = new EventType("Film Festival", "Screenings, premieres, and film industry gatherings");
+			eventTypeRepository.save(filmFestival);
+
+			EventType wellnessEvent = new EventType("Wellness", "Health, fitness, and mindfulness related events");
+			eventTypeRepository.save(wellnessEvent);
+
+			EventType politicalEvent = new EventType("Political", "Debates, campaigns, and public discussions");
+			eventTypeRepository.save(politicalEvent);
+			
+			EventType workshopEvent = new EventType("Workshop", "Hands-on training sessions or skill-based activities");
+			eventTypeRepository.save(workshopEvent);
+
+			EventType premiereEvent = new EventType("Movie Premiere", "Movie premieres or special film showings");
+			eventTypeRepository.save(premiereEvent);
+
+			EventType filmScreening = new EventType("Film Screening", "Public screenings of films or documentaries");
+			eventTypeRepository.save(filmScreening);
+
+			EventType productLaunch = new EventType("Product Launch", "Events introducing new products or services");
+			eventTypeRepository.save(productLaunch);
+
+			EventType networkingEvent = new EventType("Networking", "Professional or social networking gatherings");
+			eventTypeRepository.save(networkingEvent);
+
+			EventType charityFundraiser = new EventType("Charity Event", "Events organized to raise funds for good causes");
+			eventTypeRepository.save(charityFundraiser);
+
+			EventType lectureEvent = new EventType("Lecture", "Academic or public lectures focused on specific topics");
+			eventTypeRepository.save(lectureEvent);
+
+			EventType courseEvent = new EventType("Course", "Educational courses or multi-session training programs");
+			eventTypeRepository.save(courseEvent);
+
+			EventType virtualEvent = new EventType("Virtual Event", "Online events such as webinars, live streams, or hybrid events");
+			eventTypeRepository.save(virtualEvent);
+			
 			
 			// Create events
 			Event event1 = new Event(
@@ -149,7 +214,7 @@ public class MainApplication {
 				2,
 				"Maria 01, Helsinki",
 				"Young entrepreneurs pitch their innovative ideas to investors and mentors",
-				"https://maria01.io",
+				"https://maria.io",
 				businessEvent,
 				adminUser
 			);
@@ -169,6 +234,81 @@ public class MainApplication {
 				regularUser
 			);
 			eventRepository.save(event5);
+
+			Event event6 = new Event(
+				"AI & Machine Learning Summit 2024",
+				LocalDate.of(2024, 9, 18),
+				LocalDateTime.of(2024, 9, 18, 9, 0),
+				LocalDateTime.of(2024, 9, 18, 17, 30),
+				40,
+				5,
+				"Messukeskus, Helsinki",
+				"International summit exploring AI trends, ethical challenges, and future technologies",
+				"https://aimlsummit.fi",
+				techEvent,
+				adminUser
+			);
+			eventRepository.save(event6);
+
+			Event event7 = new Event(
+				"Christmas Charity Gala 2025",
+				LocalDate.of(2025, 12, 10),
+				LocalDateTime.of(2025, 12, 10, 19, 0),
+				LocalDateTime.of(2025, 12, 10, 23, 0),
+				60,
+				10,
+				"Finlandia Hall, Helsinki",
+				"A festive charity gala supporting children’s education initiatives",
+				"https://charitygala.fi",
+				charityEvent,
+				adminUser
+			);
+			eventRepository.save(event7);
+
+			Event event8 = new Event(
+				"Nordic Wellness Retreat 2026",
+				LocalDate.of(2026, 3, 22),
+				LocalDateTime.of(2026, 3, 22, 10, 0),
+				LocalDateTime.of(2026, 3, 22, 17, 0),
+				30,
+				2,
+				"Naantali Spa, Naantali",
+				"Day-long wellness retreat focusing on mindfulness, nutrition, and self-care",
+				"https://nordicwellness.fi",
+				wellnessEvent,
+				regularUser2
+			);
+			eventRepository.save(event8);
+
+			Event event9 = new Event(
+				"Helsinki Food Festival 2026",
+				LocalDate.of(2026, 5, 5),
+				LocalDateTime.of(2026, 5, 5, 11, 0),
+				LocalDateTime.of(2026, 5, 5, 20, 0),
+				80,
+				15,
+				"Kauppatori, Helsinki",
+				"Culinary celebration of local and international cuisine with live music and tastings",
+				"https://helsinkifoodfest.fi",
+				foodFestival,
+				regularUser
+			);
+			eventRepository.save(event9);
+
+			Event event10 = new Event(
+				"Photography Workshop 2024",
+				LocalDate.of(2024, 4, 14),
+				LocalDateTime.of(2024, 4, 14, 10, 0),
+				LocalDateTime.of(2024, 4, 14, 16, 0),
+				20,
+				2,
+				"Design Museum, Helsinki",
+				"Hands-on photography workshop focusing on composition, lighting, and creative techniques",
+				"https://helsinkiphoto.fi",
+				workshopEvent,
+				regularUser
+			);
+			eventRepository.save(event10);
 			
 			System.out.println("Demo data created successfully!");
 			System.out.println("Created " + rolePermissionsRepository.count() + " role permissions");
