@@ -7,12 +7,17 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import eventhub.main.domain.EHUser;
 import eventhub.main.domain.Event;
 import eventhub.main.domain.EventType;
+import eventhub.main.domain.UserRole;
+import eventhub.main.repositories.EHUserRepository;
 import eventhub.main.repositories.EventRepository;
 import eventhub.main.repositories.EventTypeRepository;
+import eventhub.main.repositories.UserRoleRepository;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -22,9 +27,24 @@ public class DataInitializer implements CommandLineRunner {
     
     @Autowired
     private EventRepository eventRepository;
+    
+    @Autowired
+    private UserRoleRepository roleRepository;
+    
+    @Autowired
+    private EHUserRepository userRepository;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
+        // Initialize user roles if none exist
+        initializeUserRoles();
+        
+        // Initialize sample users if none exist
+        initializeSampleUsers();
+        
         // Event types are now initialized in MainApplication.java
         // This section has been disabled to prevent duplicates
         
@@ -138,6 +158,65 @@ public class DataInitializer implements CommandLineRunner {
             }
             
             System.out.println("Sample events created successfully!");
+        }
+    }
+    
+    private void initializeUserRoles() {
+        if (roleRepository.count() == 0) {
+            UserRole adminRole = new UserRole();
+            adminRole.setRoleName("ADMIN");
+            roleRepository.save(adminRole);
+            
+            UserRole userRole = new UserRole();
+            userRole.setRoleName("USER");
+            roleRepository.save(userRole);
+            
+            System.out.println("User roles initialized successfully!");
+        }
+    }
+    
+    private void initializeSampleUsers() {
+        if (userRepository.count() == 0) {
+            // Create admin user
+            UserRole adminRole = roleRepository.findByRoleName("ADMIN").orElse(null);
+            UserRole userRole = roleRepository.findByRoleName("USER").orElse(null);
+            
+            if (adminRole != null) {
+                EHUser admin = new EHUser();
+                admin.setUsername("admin");
+                admin.setPasswordHash(passwordEncoder.encode("admin123"));
+                admin.setFirstname("Admin");
+                admin.setLastname("User");
+                admin.setEmail("admin@eventhub.com");
+                admin.setRole(adminRole);
+                userRepository.save(admin);
+            }
+            
+            if (userRole != null) {
+                // Create regular user
+                EHUser regularUser = new EHUser();
+                regularUser.setUsername("user");
+                regularUser.setPasswordHash(passwordEncoder.encode("user123"));
+                regularUser.setFirstname("John");
+                regularUser.setLastname("Doe");
+                regularUser.setEmail("user@eventhub.com");
+                regularUser.setRole(userRole);
+                userRepository.save(regularUser);
+                
+                // Create another user
+                EHUser anotherUser = new EHUser();
+                anotherUser.setUsername("jane");
+                anotherUser.setPasswordHash(passwordEncoder.encode("jane123"));
+                anotherUser.setFirstname("Jane");
+                anotherUser.setLastname("Smith");
+                anotherUser.setEmail("jane@eventhub.com");
+                anotherUser.setRole(userRole);
+                userRepository.save(anotherUser);
+            }
+            
+            System.out.println("Sample users created successfully!");
+            System.out.println("Admin login: admin / admin123");
+            System.out.println("User login: user / user123 or jane / jane123");
         }
     }
 }

@@ -74,7 +74,7 @@ public class MainApplication {
 			userRoleRepository.save(userRole);
 			
 			// Create users
-			EHUser adminUser = new EHUser("admin", "password123", "John", "Admin", "admin@eventhub.com", adminRole);
+			EHUser adminUser = new EHUser("villekotilainen", "admin", "Ville", "Kotilainen", "ville.kotilainen@myy.haaga-helia.fi", adminRole);
 			ehUserRepository.save(adminUser);
 			
 			EHUser regularUser = new EHUser("user1", "password123", "Jane", "Doe", "jane@example.com", userRole);
@@ -315,7 +315,7 @@ public class MainApplication {
 			Set<EventType> sportsTypes = new HashSet<>();
 			sportsTypes.add(sportsEvent);
 			event3.setEventTypes(sportsTypes);
-			event3.setEHUser(regularUser);
+			event3.setEHUser(adminUser);
 			eventRepository.save(event3);
 			
 			Event event4 = new Event();
