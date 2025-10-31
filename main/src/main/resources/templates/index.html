@@ -34,14 +34,13 @@
         .header-right {
             margin-left: auto;
             margin-right: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
         }
         
         .header-left {
             text-align: left;
-        }
-        
-        .header-right {
-            text-align: right;
         }
         
         .header h1 {
@@ -59,6 +58,49 @@
             max-width: 1400px;
             margin: 0 auto;
             padding: 2rem;
+        }
+        
+        /* Alert messages */
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-success::before {
+            content: "✅";
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-error::before {
+            content: "❌";
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .events-grid {
@@ -133,6 +175,13 @@
             color: #555;
             line-height: 1.6;
             margin: 1rem 0;
+        }
+        
+        .event-types {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
         }
         
         .event-type {
@@ -591,10 +640,8 @@
         }
         
         .stats {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
             color: white;
+            margin-top: 0.5rem;
         }
         
         .stats h2 {
@@ -606,6 +653,146 @@
         .stats p {
             margin: 0;
             opacity: 0.9;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+        
+        /* Authentication buttons in header */
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .auth-btn {
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .sign-in-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .sign-in-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+        }
+        
+        .sign-up-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .sign-up-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Hamburger Menu Styles */
+        .hamburger-menu {
+            position: relative;
+            margin-left: 2rem;
+        }
+        
+        .hamburger-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+        }
+        
+        .hamburger-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .hamburger-line {
+            width: 25px;
+            height: 3px;
+            background: white;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .hamburger-btn.active .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+        
+        .hamburger-btn.active .hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger-btn.active .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .dropdown-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .menu-item {
+            display: block;
+            padding: 0.75rem 1.25rem;
+            color: #2d3748;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f7fafc;
+            text-align: center;
+        }
+        
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+        
+        .menu-item:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .menu-item:first-child {
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+        
+        .menu-item:last-child {
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
         }
         
         /* All controls in one row - responsive layout */
@@ -769,14 +956,32 @@
         <div class="header-content">
             <div class="header-left">
                 <h1>🎉 EventHub</h1>
-                <p>Discover amazing events in your area</p>
+                <div class="stats">
+                    <div>
+                        <p><strong id="upcomingEventCount" th:text="${events.size()}">0</strong> events available in your area!</p>
+                    </div>
+                </div>
             </div>
             
             <div class="header-right">
-                <div class="stats">
-                    <div>
-                        <h2>📊 Event Statistics</h2>
-                        <p><strong th:text="${events.size()}">0</strong> events available</p>
+                <!-- Auth buttons -->
+                <div class="auth-buttons">
+                    <button class="auth-btn sign-in-btn">Sign In</button>
+                    <button class="auth-btn sign-up-btn">Sign Up</button>
+                </div>
+                
+                <!-- Hamburger Menu -->
+                <div class="hamburger-menu">
+                    <button class="hamburger-btn" onclick="toggleMenu()">
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                    </button>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="/" class="menu-item">🏠 Home</a>
+                        <a href="#" class="menu-item">📅 My Events</a>
+                        <a href="/events/create" class="menu-item">➕ Create Event</a>
+                        <a href="#" class="menu-item">👤 Profile</a>
                     </div>
                 </div>
             </div>
@@ -784,6 +989,14 @@
     </div>
     
     <div class="container">
+        <!-- Success/Error Messages -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-error">
+            <span th:text="${errorMessage}"></span>
+        </div>
+        
         <div class="search-parameters">
             <div class="all-controls">
                 <!-- Sort Bar -->
@@ -856,7 +1069,14 @@
                     Event description goes here...
                 </div>
                 
-                <div class="event-type" th:text="${event.eventType != null ? event.eventType.eventTypeName : 'No Type'}">Event Type</div>
+                <div class="event-types">
+                    <span th:if="${event.eventTypes != null and not event.eventTypes.empty}"
+                          th:each="eventType : ${event.eventTypes}"
+                          class="event-type"
+                          th:text="${eventType.eventTypeName}">Event Type</span>
+                    <span th:if="${event.eventTypes == null or event.eventTypes.empty}" 
+                          class="event-type">No Type</span>
+                </div>
                 
                 <div class="event-votes">
                     <button class="vote-button upvote-btn" th:onclick="'voteEvent(' + ${event.id} + ', \'upvote\')'">
@@ -1277,12 +1497,37 @@
             return null;
         }
         
+        // Update upcoming events count in header
+        function updateUpcomingEventsCount() {
+            const eventCards = document.querySelectorAll('.event-card');
+            let upcomingCount = 0;
+            
+            eventCards.forEach(card => {
+                const dateSpan = card.querySelector('.info-item span[data-raw-date]');
+                if (dateSpan) {
+                    const eventDate = dateSpan.getAttribute('data-raw-date');
+                    const isPast = isEventInPast(eventDate);
+                    if (!isPast) {
+                        upcomingCount++;
+                    }
+                }
+            });
+            
+            const countElement = document.getElementById('upcomingEventCount');
+            if (countElement) {
+                countElement.textContent = upcomingCount;
+            }
+        }
+        
         // Initialize button states when page loads
         document.addEventListener('DOMContentLoaded', function() {
             updateButtonStates();
             
             // Store the total event count so stats always show total, not filtered count
             totalEventCount = document.querySelectorAll('.event-card').length;
+            
+            // Update upcoming events count in header
+            updateUpcomingEventsCount();
             
             // Restore date selection if input field has value (after page refresh)
             restoreDateSelectionFromInput();
@@ -1326,6 +1571,36 @@
             
             // Run initial filter (past events hidden by default)
             filterEvents();
+        });
+        
+        // Hamburger menu functionality
+        function toggleMenu() {
+            const hamburgerBtn = document.querySelector('.hamburger-btn');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            
+            hamburgerBtn.classList.toggle('active');
+            dropdownMenu.classList.toggle('active');
+        }
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const hamburgerMenu = document.querySelector('.hamburger-menu');
+            if (!hamburgerMenu.contains(e.target)) {
+                const hamburgerBtn = document.querySelector('.hamburger-btn');
+                const dropdownMenu = document.getElementById('dropdownMenu');
+                hamburgerBtn.classList.remove('active');
+                dropdownMenu.classList.remove('active');
+            }
+        });
+        
+        // Close menu when pressing escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const hamburgerBtn = document.querySelector('.hamburger-btn');
+                const dropdownMenu = document.getElementById('dropdownMenu');
+                hamburgerBtn.classList.remove('active');
+                dropdownMenu.classList.remove('active');
+            }
         });
     </script>
 </body>

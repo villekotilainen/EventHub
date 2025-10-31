@@ -3,9 +3,13 @@ package eventhub.main.domain;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import java.util.Set;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotEmpty;
@@ -41,9 +45,13 @@ public class Event {
     
     private String eventWebsite;
 
-    @ManyToOne
-    @NotEmpty(message = "Atleast one event type is required")
-    private EventType eventType;
+    @ManyToMany
+    @JoinTable(
+        name = "event_event_types",
+        joinColumns = @JoinColumn(name = "event_id"),
+        inverseJoinColumns = @JoinColumn(name = "event_type_id")
+    )
+    private Set<EventType> eventTypes;
 
     @ManyToOne
     private EHUser EHUser;
@@ -52,7 +60,7 @@ public class Event {
 
     public Event(String eventName, LocalDate eventDate, LocalDateTime eventStart, LocalDateTime eventEnd, Integer eventUpVote,
             Integer eventDownVote, String eventLocation, String eventDescription, String eventWebsite,
-            EventType eventType, EHUser eHUser) {
+            Set<EventType> eventTypes, EHUser eHUser) {
         super();
         this.eventName = eventName;
         this.eventDate = eventDate;
@@ -63,7 +71,7 @@ public class Event {
         this.eventLocation = eventLocation;
         this.eventDescription = eventDescription;
         this.eventWebsite = eventWebsite;
-        this.eventType = eventType;
+        this.eventTypes = eventTypes;
         this.EHUser = eHUser;
     }
 
@@ -149,12 +157,12 @@ public class Event {
         this.eventWebsite = eventWebsite;
     }
 
-    public EventType getEventType() {
-        return eventType;
+    public Set<EventType> getEventTypes() {
+        return eventTypes;
     }
 
-    public void setEventType(EventType eventType) {
-        this.eventType = eventType;
+    public void setEventTypes(Set<EventType> eventTypes) {
+        this.eventTypes = eventTypes;
     }
 
     public EHUser getEHUser() {
@@ -172,7 +180,7 @@ public class Event {
         return "Event [id=" + id + ", eventName=" + eventName + ", eventDate=" + eventDate + ", eventStart="
                 + eventStart + ", eventEnd=" + eventEnd + ", eventUpVote=" + eventUpVote + ", eventDownVote="
                 + eventDownVote + ", eventLocation=" + eventLocation + ", eventDescription=" + eventDescription
-                + ", eventWebsite=" + eventWebsite + ", eventType=" + eventType + ", EHUser=" + EHUser + "]";
+                + ", eventWebsite=" + eventWebsite + ", eventTypes=" + eventTypes + ", EHUser=" + EHUser + "]";
     }
     
 }
