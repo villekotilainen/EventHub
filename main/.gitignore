@@ -31,3 +31,14 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Environment and Security ###
+.env
+.env.local
+.env.production
+.env.staging
+*.key
+*.pem
+secrets/
+application-prod.properties
+application-production.properties

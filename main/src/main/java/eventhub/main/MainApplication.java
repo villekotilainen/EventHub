@@ -6,10 +6,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import eventhub.main.domain.EHUser;
 import eventhub.main.domain.Event;
@@ -25,6 +27,15 @@ import eventhub.main.repositories.UserRoleRepository;
 @SpringBootApplication
 public class MainApplication {
 
+	@Value("${admin.username:admin}")
+	private String adminUsername;
+	
+	@Value("${admin.password:SecureAdmin2024!}")
+	private String adminPassword;
+	
+	@Value("${admin.email:admin@localhost}")
+	private String adminEmail;
+
 	@Autowired
 	private RolePermissionsRepository rolePermissionsRepository;
 	
@@ -39,6 +50,9 @@ public class MainApplication {
 	
 	@Autowired
 	private EventRepository eventRepository;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	public static void main(String[] args) {
 		SpringApplication.run(MainApplication.class, args);
@@ -73,15 +87,10 @@ public class MainApplication {
 			UserRole userRole = new UserRole("USER", userPermissions);
 			userRoleRepository.save(userRole);
 			
-			// Create users
-			EHUser adminUser = new EHUser("villekotilainen", "admin", "Ville", "Kotilainen", "ville.kotilainen@myy.haaga-helia.fi", adminRole);
+			// Create admin user with secure credentials from properties
+			
+			EHUser adminUser = new EHUser(adminUsername, passwordEncoder.encode(adminPassword), "System", "Administrator", adminEmail, adminRole);
 			ehUserRepository.save(adminUser);
-			
-			EHUser regularUser = new EHUser("user1", "password123", "Jane", "Doe", "jane@example.com", userRole);
-			ehUserRepository.save(regularUser);
-			
-			EHUser regularUser2 = new EHUser("user2", "password123", "Bob", "Smith", "bob@example.com", userRole);
-			ehUserRepository.save(regularUser2);
 			
 			// Hardcoded event types
 
@@ -348,7 +357,7 @@ public class MainApplication {
 			Set<EventType> reactTypes = new HashSet<>();
 			reactTypes.add(techEvent);
 			event5.setEventTypes(reactTypes);
-			event5.setEHUser(regularUser);
+			event5.setEHUser(adminUser);
 			eventRepository.save(event5);
 
 			Event event6 = new Event();
@@ -382,7 +391,7 @@ public class MainApplication {
 			charityTypes.add(charityEvent);
 			charityTypes.add(communityEvent);
 			event7.setEventTypes(charityTypes);
-			event7.setEHUser(regularUser);
+			event7.setEHUser(adminUser);
 			eventRepository.save(event7);
 
 
@@ -400,7 +409,7 @@ public class MainApplication {
 			Set<EventType> wellnessTypes = new HashSet<>();
 			wellnessTypes.add(wellnessEvent);
 			event8.setEventTypes(wellnessTypes);
-			event8.setEHUser(regularUser2);
+			event8.setEHUser(adminUser);
 			eventRepository.save(event8);
 
 			Event event9 = new Event();
@@ -417,7 +426,7 @@ public class MainApplication {
 			foodTypes.add(foodFestival);
 			foodTypes.add(communityEvent);
 			event9.setEventTypes(foodTypes);
-			event9.setEHUser(regularUser);
+			event9.setEHUser(adminUser);
 			eventRepository.save(event9);
 
 			Event event10 = new Event();
@@ -434,7 +443,7 @@ public class MainApplication {
 			workshopTypes.add(educationEvent);
 			workshopTypes.add(workshopEvent);
 			event10.setEventTypes(workshopTypes);
-			event10.setEHUser(regularUser2);
+			event10.setEHUser(adminUser);
 			eventRepository.save(event10);
 
 

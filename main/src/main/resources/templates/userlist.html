@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - EventHub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Header Styling */
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+        }
+
+        .logo-text {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .user-count {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-top: 0.2rem;
+        }
+
+        /* Navigation */
+        .nav-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            margin-right: 2rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            opacity: 0.9;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            opacity: 1;
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            opacity: 1;
+        }
+
+        .homepage-btn {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.8), rgba(255, 165, 0, 0.8)) !important;
+            color: #2c3e50 !important;
+            font-weight: 600 !important;
+            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            font-size: 0.95rem;
+        }
+
+        .homepage-btn:hover {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.9), rgba(255, 165, 0, 0.9)) !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+            color: #1a252f !important;
+        }
+
+        /* Auth buttons styling */
+        .auth-buttons {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .welcome-message {
+            color: white;
+            font-weight: 700;
+            font-size: 1.4rem;
+            margin-right: 2rem;
+            opacity: 1;
+            display: inline;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .auth-btn {
+            padding: 0.5rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-1px);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            color: white;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Flash Messages */
+        .flash-message {
+            max-width: 1200px;
+            margin: 0 auto 2rem auto;
+            padding: 1.2rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .flash-success {
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.15), rgba(32, 201, 151, 0.1));
+            border: 2px solid rgba(40, 167, 69, 0.4);
+            color: #1e7e34;
+            backdrop-filter: blur(10px);
+        }
+
+        .flash-success::before {
+            content: "✅";
+            font-size: 1.3rem;
+        }
+
+        .flash-error {
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.15), rgba(200, 35, 51, 0.1));
+            border: 2px solid rgba(220, 53, 69, 0.4);
+            color: #721c24;
+            backdrop-filter: blur(10px);
+        }
+
+        .flash-error::before {
+            content: "❌";
+            font-size: 1.3rem;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Users Table */
+        .users-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .users-table th {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .users-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .users-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .users-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+        }
+
+        .users-table tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .user-email {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .role-admin {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        .role-user {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .current-user {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+
+        .delete-btn {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+        }
+
+        .delete-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .delete-btn:disabled:hover {
+            transform: none;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+        }
+
+        .promote-btn {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+
+        .promote-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .back-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            margin-bottom: 2rem;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .no-users {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+
+            .main-content {
+                padding: 0 1rem;
+            }
+
+            .users-table {
+                font-size: 0.9rem;
+            }
+
+            .users-table th,
+            .users-table td {
+                padding: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <div class="logo">👥</div>
+            <div>
+                <a href="/" class="logo-text">EventHub Admin</a>
+                <div class="user-count" th:text="|${users.size()} registered users|">0 registered users</div>
+            </div>
+        </div>
+
+        <!-- Navigation Section -->
+        <div class="nav-section">
+            <!-- Navigation Links -->
+            <nav class="nav-links">
+                <a href="/" class="nav-link">All Events</a>
+                <a href="/my-events" class="nav-link">My Events</a>
+                <a href="/admin/users" class="nav-link active">Manage Users</a>
+                <a href="/" class="nav-link homepage-btn">🏠</a>
+            </nav>
+
+            <!-- Welcome message and logout for authenticated users -->
+            <div class="auth-buttons" sec:authorize="isAuthenticated()">
+                <span class="welcome-message">
+                    Admin Panel - <span sec:authentication="name">User</span>
+                </span>
+                <form method="post" th:action="@{/logout}" style="display: inline;">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="auth-btn logout-btn">Log Out</button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">User Management</h1>
+            <p class="page-subtitle">Manage all registered users in the EventHub system</p>
+        </div>
+
+        <!-- Flash Messages -->
+        <div th:if="${successMessage}" class="flash-message flash-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="flash-message flash-error" th:text="${errorMessage}"></div>
+
+        <!-- Back Button -->
+        <a href="/" class="back-btn">
+            ← Back to Events
+        </a>
+
+        <!-- Users Container -->
+        <div th:if="${users != null and !users.empty}" class="users-container">
+            <h2 style="margin-bottom: 1rem; color: #2c3e50;">All Users</h2>
+            
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>User Information</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${users}">
+                        <td>
+                            <div class="user-info">
+                                <div class="user-name">
+                                    <span th:text="${user.firstname + ' ' + user.lastname}">John Doe</span>
+                                    <span th:if="${user.username == currentUsername}" class="current-user">You</span>
+                                </div>
+                                <div class="user-email" th:text="${user.email}">john.doe@example.com</div>
+                            </div>
+                        </td>
+                        <td>
+                            <strong th:text="${user.username}">johndoe</strong>
+                        </td>
+                        <td>
+                            <span class="role-badge" 
+                                  th:classappend="${user.role.roleName == 'ADMIN'} ? 'role-admin' : 'role-user'" 
+                                  th:text="${user.role.roleName}">USER</span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <!-- Promote to Admin button (only for non-admin users) -->
+                                <form th:if="${user.role.roleName != 'ADMIN' and user.username != currentUsername}" 
+                                      method="post" th:action="@{/admin/users/promote/{id}(id=${user.id})}" style="display: inline;"
+                                      onsubmit="return confirm('Are you sure you want to promote this user to Administrator? They will have full admin privileges.');">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                    <button type="submit" class="promote-btn">
+                                        ⬆️ Make Admin
+                                    </button>
+                                </form>
+                                
+                                <!-- Delete User button -->
+                                <form method="post" th:action="@{/admin/users/delete/{id}(id=${user.id})}" style="display: inline;"
+                                      th:unless="${user.username == currentUsername}"
+                                      onsubmit="return confirm('Are you sure you want to delete this user? This will also delete all their events and cannot be undone.');">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                    <button type="submit" class="delete-btn">
+                                        🗑️ Delete User
+                                    </button>
+                                </form>
+                                
+                                <!-- Message for current user -->
+                                <span th:if="${user.username == currentUsername}" style="color: #666; font-style: italic;">
+                                    Cannot modify yourself
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${users == null or users.empty}" class="no-users">
+            <h3>No Users Found</h3>
+            <p>There are no registered users in the system.</p>
+        </div>
+    </main>
+</body>
+</html>

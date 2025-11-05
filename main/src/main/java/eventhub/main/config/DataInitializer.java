@@ -8,7 +8,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
+// import org.springframework.stereotype.Component; - DISABLED
 
 import eventhub.main.domain.EHUser;
 import eventhub.main.domain.Event;
@@ -19,7 +19,7 @@ import eventhub.main.repositories.EventRepository;
 import eventhub.main.repositories.EventTypeRepository;
 import eventhub.main.repositories.UserRoleRepository;
 
-@Component
+// @Component - DISABLED to prevent duplicate user creation (MainApplication.java handles initialization)
 public class DataInitializer implements CommandLineRunner {
 
     @Autowired
@@ -39,45 +39,11 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Initialize user roles if none exist
         initializeUserRoles();
         
-        // Initialize sample users if none exist
+    
         initializeSampleUsers();
         
-        // Event types are now initialized in MainApplication.java
-        // This section has been disabled to prevent duplicates
-        
-        /*
-        // Initialize event types if none exist
-        if (eventTypeRepository.count() == 0) {
-            EventType business = new EventType("Business", "Corporate events, conferences, networking");
-            EventType technology = new EventType("Technology", "Tech meetups, hackathons, product launches");
-            EventType music = new EventType("Music", "Concerts, festivals, live performances");
-            EventType sports = new EventType("Sports", "Sports events, tournaments, fitness activities");
-            EventType charity = new EventType("Charity", "Fundraising events, charity galas, community service");
-            EventType education = new EventType("Education", "Workshops, seminars, training sessions");
-            EventType entertainment = new EventType("Entertainment", "Shows, movies, comedy events");
-            EventType food = new EventType("Food & Drink", "Food festivals, wine tastings, culinary events");
-            EventType art = new EventType("Art & Culture", "Art exhibitions, cultural events, theater");
-            EventType social = new EventType("Social", "Social gatherings, parties, community events");
-            
-            eventTypeRepository.save(business);
-            eventTypeRepository.save(technology);
-            eventTypeRepository.save(music);
-            eventTypeRepository.save(sports);
-            eventTypeRepository.save(charity);
-            eventTypeRepository.save(education);
-            eventTypeRepository.save(entertainment);
-            eventTypeRepository.save(food);
-            eventTypeRepository.save(art);
-            eventTypeRepository.save(social);
-            
-            System.out.println("Event types initialized successfully!");
-        }
-        */
-        
-        // Add some sample events if none exist
         if (eventRepository.count() == 0) {
             EventType business = eventTypeRepository.findAll().stream()
                     .filter(type -> "Business".equals(type.getEventTypeName()))
@@ -177,46 +143,32 @@ public class DataInitializer implements CommandLineRunner {
     
     private void initializeSampleUsers() {
         if (userRepository.count() == 0) {
-            // Create admin user
             UserRole adminRole = roleRepository.findByRoleName("ADMIN").orElse(null);
-            UserRole userRole = roleRepository.findByRoleName("USER").orElse(null);
             
             if (adminRole != null) {
+                String adminUsername = System.getenv("ADMIN_USERNAME") != null ? 
+                    System.getenv("ADMIN_USERNAME") : "admin";
+                String adminPassword = System.getenv("ADMIN_PASSWORD") != null ? 
+                    System.getenv("ADMIN_PASSWORD") : "SecureAdmin2024!";
+                String adminEmail = System.getenv("ADMIN_EMAIL") != null ? 
+                    System.getenv("ADMIN_EMAIL") : "admin@localhost";
+                
                 EHUser admin = new EHUser();
-                admin.setUsername("admin");
-                admin.setPasswordHash(passwordEncoder.encode("admin123"));
-                admin.setFirstname("Admin");
-                admin.setLastname("User");
-                admin.setEmail("admin@eventhub.com");
+                admin.setUsername(adminUsername);
+                admin.setPasswordHash(passwordEncoder.encode(adminPassword));
+                admin.setFirstname("System");
+                admin.setLastname("Administrator");
+                admin.setEmail(adminEmail);
                 admin.setRole(adminRole);
                 userRepository.save(admin);
-            }
-            
-            if (userRole != null) {
-                // Create regular user
-                EHUser regularUser = new EHUser();
-                regularUser.setUsername("user");
-                regularUser.setPasswordHash(passwordEncoder.encode("user123"));
-                regularUser.setFirstname("John");
-                regularUser.setLastname("Doe");
-                regularUser.setEmail("user@eventhub.com");
-                regularUser.setRole(userRole);
-                userRepository.save(regularUser);
                 
-                // Create another user
-                EHUser anotherUser = new EHUser();
-                anotherUser.setUsername("jane");
-                anotherUser.setPasswordHash(passwordEncoder.encode("jane123"));
-                anotherUser.setFirstname("Jane");
-                anotherUser.setLastname("Smith");
-                anotherUser.setEmail("jane@eventhub.com");
-                anotherUser.setRole(userRole);
-                userRepository.save(anotherUser);
+                System.out.println("Admin user created successfully!");
+                // Only show this in development - remove in production
+                if (System.getenv("SPRING_PROFILES_ACTIVE") != null && 
+                    System.getenv("SPRING_PROFILES_ACTIVE").contains("dev")) {
+                    System.out.println("Development mode - Admin credentials: " + adminUsername + " / " + adminPassword);
+                }
             }
-            
-            System.out.println("Sample users created successfully!");
-            System.out.println("Admin login: admin / admin123");
-            System.out.println("User login: user / user123 or jane / jane123");
         }
     }
 }

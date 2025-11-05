@@ -41,6 +41,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 // Public pages - no authentication required
                 .requestMatchers("/", "/index", "/events", "/login", "/signup", "/register").permitAll()
+                .requestMatchers("/forgot-password", "/reset-password").permitAll() // Password reset pages
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
                 .requestMatchers("/h2-console/**").permitAll() // For H2 database console (development only)
                 
