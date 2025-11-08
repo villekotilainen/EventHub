@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>EventHub - All Events</title>
     <style>
         body {
@@ -1056,13 +1058,11 @@
             </div>
             
             <div class="header-right">
-                <!-- Auth buttons for non-authenticated users -->
                 <div class="auth-buttons" sec:authorize="!isAuthenticated()">
                     <a href="/login" class="auth-btn sign-in-btn">Sign In</a>
                     <a href="/signup" class="auth-btn sign-up-btn">Sign Up</a>
                 </div>
                 
-                <!-- Welcome message and logout for authenticated users -->
                 <div class="auth-buttons" sec:authorize="isAuthenticated()">
                     <span class="welcome-message">
                         Welcome <span sec:authentication="name">User</span>!
@@ -1073,7 +1073,6 @@
                     </form>
                 </div>
                 
-                <!-- Hamburger Menu -->
                 <div class="hamburger-menu">
                     <button class="hamburger-btn" onclick="toggleMenu()">
                         <span class="hamburger-line"></span>
@@ -1083,19 +1082,16 @@
                     <div class="dropdown-menu" id="dropdownMenu">
                         <a href="/" class="menu-item">🏠 Home</a>
                         
-                        <!-- Menu items for authenticated users -->
                         <div sec:authorize="isAuthenticated()">
                             <a href="/my-events" class="menu-item">📅 My Events</a>
                             <a href="/events/create" class="menu-item">➕ Create Event</a>
-                            <a href="#" class="menu-item">👤 Profile</a>
+                            <a href="/profile" class="menu-item">👤 Profile</a>
                             
-                            <!-- Admin-only menu item -->
                             <div th:if="${isCurrentUserAdmin}">
                                 <a href="/admin/users" class="menu-item">👥 Manage Users</a>
                             </div>
                         </div>
                         
-                        <!-- Menu items for non-authenticated users -->
                         <div sec:authorize="!isAuthenticated()">
                             <a href="/login" class="menu-item">🔐 Sign In</a>
                             <a href="/signup" class="menu-item">📝 Sign Up</a>
@@ -1107,7 +1103,6 @@
     </div>
     
     <div class="container">
-        <!-- Success/Error Messages -->
         <div th:if="${successMessage}" class="alert alert-success">
             <span th:text="${successMessage}"></span>
         </div>
@@ -1117,7 +1112,6 @@
         
         <div class="search-parameters">
             <div class="all-controls">
-                <!-- Sort Bar -->
                 <div class="control-group">
                     <select id="sortBy">
                         <option value="date-asc">Date (Ascending)</option>
@@ -1128,12 +1122,10 @@
                     </select>
                 </div>
                 
-                <!-- Search Events -->
                 <div class="control-group">
                     <input type="text" id="textSearch" placeholder="Search by name, location or type..." />
                 </div>
                 
-                <!-- Search by date -->
                 <div class="control-group">
                     <div class="date-range-picker">
                         <input type="text" id="dateRange" placeholder="Select date range..." readonly />
@@ -1141,7 +1133,6 @@
                     </div>
                 </div>
                 
-                <!-- Show Past Events Toggle - on the right -->
                 <div class="control-group toggle-right">
                     <label class="toggle-switch">
                         <input type="checkbox" id="showPastEvents" />
@@ -1197,14 +1188,20 @@
                 </div>
                 
                 <div class="event-votes">
-                    <button class="vote-button upvote-btn" th:onclick="'voteEvent(' + ${event.id} + ', \'upvote\')'">
+                    <!-- Show voting buttons for all users, but require login for actual voting -->
+                    <button class="vote-button upvote-btn" 
+                            th:onclick="'voteEvent(' + ${event.id} + ', \'upvote\')'">
                         <span>👍</span>
                         <span class="vote-count" th:text="${event.eventUpVote != null ? event.eventUpVote : 0}">0</span>
                     </button>
-                    <button class="vote-button downvote-btn" th:onclick="'voteEvent(' + ${event.id} + ', \'downvote\')'">
+                    <button class="vote-button downvote-btn" 
+                            th:onclick="'voteEvent(' + ${event.id} + ', \'downvote\')'">
                         <span>👎</span>
                         <span class="vote-count" th:text="${event.eventDownVote != null ? event.eventDownVote : 0}">0</span>
                     </button>
+                    <div sec:authorize="!isAuthenticated()" class="login-prompt" style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">
+                        <a href="/login" style="color: #667eea; text-decoration: none;">Log in</a> to vote on events
+                    </div>
                 </div>
                 
                 <div class="event-website" th:if="${event.eventWebsite != null and event.eventWebsite != ''}">
@@ -1213,7 +1210,6 @@
                     </a>
                 </div>
                 
-                <!-- Admin action buttons (only shown for admin users) -->
                 <div class="admin-actions" th:if="${isCurrentUserAdmin}">
                     <a th:href="@{/admin/events/edit/{id}(id=${event.id})}" class="admin-edit-btn">
                         ✏️ Edit
@@ -1236,67 +1232,113 @@
     </div>
 
     <script>
-        // Voting system - localStorage based vote tracking
+        // Voting system - server-based user voting
+        let userVoteStatus = {}; // Cache for user vote status
+        
+        async function getUserVoteStatus(eventId) {
+            if (userVoteStatus[eventId] !== undefined) {
+                return userVoteStatus[eventId];
+            }
+            
+            try {
+                const response = await fetch(`/vote/${eventId}/status`);
+                if (response.ok) {
+                    const status = await response.text();
+                    userVoteStatus[eventId] = status;
+                    return status;
+                }
+            } catch (error) {
+                console.error('Error getting vote status:', error);
+            }
+            return 'no_vote';
+        }
+        
         function hasUserVoted(eventId) {
-            const votedEvents = JSON.parse(localStorage.getItem('votedEvents') || '{}');
-            return votedEvents[eventId] !== undefined;
+            const status = userVoteStatus[eventId];
+            return status === 'upvote' || status === 'downvote';
         }
         
         function getUserVoteType(eventId) {
-            const votedEvents = JSON.parse(localStorage.getItem('votedEvents') || '{}');
-            return votedEvents[eventId];
+            return userVoteStatus[eventId];
         }
-        
-        function storeUserVote(eventId, voteType) {
-            const votedEvents = JSON.parse(localStorage.getItem('votedEvents') || '{}');
-            votedEvents[eventId] = voteType;
-            localStorage.setItem('votedEvents', JSON.stringify(votedEvents));
-        }
-        function updateButtonStates() {
-            document.querySelectorAll('.event-card').forEach(card => {
+        async function updateButtonStates() {
+            const cards = document.querySelectorAll('.event-card');
+            
+            for (const card of cards) {
                 const upvoteBtn = card.querySelector('.upvote-btn');
                 const downvoteBtn = card.querySelector('.downvote-btn');
                 
                 if (upvoteBtn && downvoteBtn) {
                     const eventId = upvoteBtn.onclick.toString().match(/\d+/)[0];
-                    const userVote = getUserVoteType(eventId);
+                    const userVote = await getUserVoteStatus(eventId);
                     
                     upvoteBtn.classList.remove('voted');
                     downvoteBtn.classList.remove('voted');
                     upvoteBtn.disabled = false;
                     downvoteBtn.disabled = false;
                     
-                    if (userVote === 'upvote') {
+                    if (userVote === 'not_logged_in') {
+                        // Show login message on buttons
+                        upvoteBtn.title = "Please log in to vote";
+                        downvoteBtn.title = "Please log in to vote";
+                    } else if (userVote === 'upvote') {
                         upvoteBtn.classList.add('voted');
-                        downvoteBtn.disabled = true;
+                        upvoteBtn.title = "Click to remove your upvote";
+                        downvoteBtn.title = "Click to change to downvote";
                     } else if (userVote === 'downvote') {
                         downvoteBtn.classList.add('voted');
-                        upvoteBtn.disabled = true;
+                        downvoteBtn.title = "Click to remove your downvote";
+                        upvoteBtn.title = "Click to change to upvote";
+                    } else {
+                        upvoteBtn.title = "Click to upvote this event";
+                        downvoteBtn.title = "Click to downvote this event";
                     }
                 }
-            });
+            }
+        }
+        
+        function getCSRFToken() {
+            const token = document.querySelector('meta[name="_csrf"]');
+            return token ? token.getAttribute('content') : '';
+        }
+        
+        function getCSRFHeader() {
+            const header = document.querySelector('meta[name="_csrf_header"]');
+            return header ? header.getAttribute('content') : 'X-CSRF-TOKEN';
         }
         
         async function voteEvent(eventId, voteType) {
-            if (hasUserVoted(eventId)) {
-                alert('You have already voted for this event!');
-                return;
-            }
-            
             try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                };
+                
+                // Add CSRF token if available
+                const csrfToken = getCSRFToken();
+                if (csrfToken) {
+                    headers[getCSRFHeader()] = csrfToken;
+                }
+                
                 const response = await fetch(`/vote/${eventId}/${voteType}`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
+                    headers: headers
                 });
                 
+                if (response.status === 401) {
+                    alert('Please log in to vote on events.');
+                    return;
+                }
+                
                 if (response.ok) {
-                    storeUserVote(eventId, voteType);
+                    // Clear the cached vote status for this event
+                    delete userVoteStatus[eventId];
+                    // Reload page to show updated vote counts
                     window.location.reload();
                 } else {
-                    console.error('Failed to vote');
-                    alert('Failed to vote. Please try again.');
+                    const errorMessage = await response.text();
+                    console.error('Failed to vote:', errorMessage);
+                    alert('Failed to vote: ' + errorMessage);
                 }
             } catch (error) {
                 console.error('Error voting:', error);

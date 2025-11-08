@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - EventHub</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -145,6 +146,80 @@
             padding-left: 7.5px;
             padding-right: 7.5px;
         }
+        
+        .password-toggle-container {
+            position: relative;
+        }
+        
+        .password-toggle-container .form-control {
+            padding-right: 50px;
+        }
+        
+        .password-toggle-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 16px;
+            z-index: 10;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+        
+        .password-toggle-btn:hover {
+            background: rgba(156, 163, 175, 0.08);
+            color: #6b7280;
+            transform: translateY(-50%) scale(1.05);
+        }
+        
+        .password-toggle-btn.showing {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.06);
+        }
+        
+        .password-toggle-btn.showing:hover {
+            background: rgba(102, 126, 234, 0.12);
+            color: #5a67d8;
+            transform: translateY(-50%) scale(1.05);
+        }
+        
+        .password-toggle-btn:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+        
+        .password-toggle-btn i {
+            font-size: 14px !important;
+            display: block !important;
+            color: inherit !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            line-height: 1 !important;
+        }
+        
+        .password-toggle-btn i::before {
+            content: "\f06e" !important;
+            font-family: "Font Awesome 5 Free" !important;
+            font-weight: 900 !important;
+        }
+        
+        .password-toggle-btn:hover {
+            color: #667eea;
+        }
+        
+        .password-toggle-btn:focus {
+            outline: none;
+            color: #667eea;
+        }
     </style>
 </head>
 <body>
@@ -155,13 +230,11 @@
             <p>Create your account to start organizing events</p>
         </div>
         
-        <!-- Error message display -->
         <div th:if="${errorMessage}" class="error-message">
             <i class="fas fa-exclamation-triangle"></i>
             <span th:text="${errorMessage}">Registration failed</span>
         </div>
         
-        <!-- Success message display -->
         <div th:if="${successMessage}" class="success-message">
             <i class="fas fa-check-circle"></i>
             <span th:text="${successMessage}">Success message</span>
@@ -169,7 +242,6 @@
         
         <!-- Signup Form -->
         <form th:action="@{/register}" method="post" th:object="${user}">
-            <!-- CSRF Token for Spring Security -->
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             
             <div class="row">
@@ -229,25 +301,20 @@
                 <div class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
             </div>
             
-            <div class="form-floating">
+            <div class="form-floating password-toggle-container">
                 <input type="password" 
                        class="form-control" 
                        th:field="*{passwordHash}"
                        id="password" 
                        placeholder="Password"
                        required>
+                <button type="button" class="password-toggle-btn" id="passwordToggle" aria-label="Show password" title="Click to show password">
+                    <i class="fas fa-eye" id="passwordToggleIcon" style="font-family: 'Font Awesome 5 Free'; font-weight: 900;"></i>
+                </button>
                 <label for="password">
                     <i class="fas fa-lock"></i> Password
                 </label>
                 <div class="field-error" th:if="${#fields.hasErrors('passwordHash')}" th:errors="*{passwordHash}"></div>
-            </div>
-            
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="terms" required>
-                <label class="form-check-label" for="terms">
-                    I agree to the <a href="#" style="color: #667eea;">Terms of Service</a> and 
-                    <a href="#" style="color: #667eea;">Privacy Policy</a>
-                </label>
             </div>
             
             <button type="submit" class="btn btn-primary btn-signup">
@@ -255,7 +322,6 @@
             </button>
         </form>
         
-        <!-- Login Link -->
         <div class="login-link">
             <p class="mb-0">
                 Already have an account? 
@@ -264,8 +330,43 @@
         </div>
     </div>
     
-    <!-- Bootstrap JS and Font Awesome -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    
+    <!-- Password Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordField = document.getElementById('password');
+            const passwordToggle = document.getElementById('passwordToggle');
+            
+            if (passwordToggle && passwordField) {
+                // Click to toggle
+                passwordToggle.addEventListener('click', function() {
+                    togglePasswordVisibility();
+                });
+                
+                function togglePasswordVisibility() {
+                    if (passwordField.type === 'password') {
+                        showPassword();
+                    } else {
+                        hidePassword();
+                    }
+                }
+                
+                function showPassword() {
+                    passwordField.type = 'text';
+                    passwordToggle.classList.add('showing');
+                    passwordToggle.setAttribute('aria-label', 'Hide password');
+                    passwordToggle.title = 'Click to hide password';
+                }
+                
+                function hidePassword() {
+                    passwordField.type = 'password';
+                    passwordToggle.classList.remove('showing');
+                    passwordToggle.setAttribute('aria-label', 'Show password');
+                    passwordToggle.title = 'Click to show password';
+                }
+            }
+        });
+    </script>
 </body>
 </html>

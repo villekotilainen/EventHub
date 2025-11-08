@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 
                 // User pages - require authentication
-                .requestMatchers("/events/create", "/profile", "/my-events").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/events/create", "/profile", "/profile/**", "/my-events").hasAnyRole("USER", "ADMIN")
                 
                 // Voting requires authentication
                 .requestMatchers("/vote/**").hasAnyRole("USER", "ADMIN")

@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Events - EventHub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -18,140 +20,14 @@
             color: #333;
         }
 
-        /* Header Styling */
-        .header {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        /* Navigation Styling */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
 
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .logo {
-            font-size: 2rem;
-        }
-
-        .logo-text {
-            color: white;
-            font-size: 1.8rem;
-            font-weight: 700;
-            text-decoration: none;
-        }
-
-        .event-count {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
-            margin-top: 0.2rem;
-        }
-
-        /* Navigation */
-        .nav-section {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 1rem;
-            margin-right: 2rem;
-        }
-
-        .nav-link {
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            opacity: 0.9;
-        }
-
-        .nav-link:hover {
-            background: rgba(255, 255, 255, 0.1);
-            opacity: 1;
-        }
-
-        .nav-link.active {
-            background: rgba(255, 255, 255, 0.2);
-            opacity: 1;
-        }
-
-        .homepage-btn {
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.8), rgba(255, 165, 0, 0.8)) !important;
-            color: #2c3e50 !important;
-            font-weight: 600 !important;
-            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
-            border: 2px solid rgba(255, 215, 0, 0.4);
-            font-size: 0.95rem;
-        }
-
-        .homepage-btn:hover {
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.9), rgba(255, 165, 0, 0.9)) !important;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
-            color: #1a252f !important;
-        }
-
-        /* Auth buttons styling */
-        .auth-buttons {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .welcome-message {
-            color: white;
-            font-weight: 700;
-            font-size: 1.4rem;
-            margin-right: 2rem;
-            opacity: 1;
-            display: inline;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            background: linear-gradient(45deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
-            padding: 0.8rem 1.5rem;
-            border-radius: 25px;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            cursor: default;
-        }
-
-
-        .auth-btn {
-            padding: 0.5rem 1.2rem;
-            border: none;
-            border-radius: 6px;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .logout-btn {
-            background: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.5);
-            transform: translateY(-1px);
-        }
+        /* Removed old navigation styles - now using Bootstrap navbar */
 
         /* Main Content */
         .main-content {
@@ -440,89 +316,10 @@
             margin-bottom: 2rem;
         }
 
-        /* Hamburger Menu for Mobile */
-        .hamburger-menu {
-            display: none;
-        }
-
-        .hamburger-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.5rem;
-        }
-
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 1rem 0;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            min-width: 200px;
-            z-index: 1000;
-            animation: slideDown 0.3s ease-out;
-        }
-
-        .dropdown-menu.active {
-            display: block;
-        }
-
-        .menu-item {
-            display: block;
-            padding: 0.8rem 1.5rem;
-            color: #333;
-            text-decoration: none;
-            transition: background-color 0.3s ease;
-            font-weight: 500;
-        }
-
-        .menu-item:last-child {
-            border-bottom: none;
-        }
-
-        .menu-item:hover {
-            background: rgba(102, 126, 234, 0.1);
-        }
-
-        .menu-item:first-child {
-            border-radius: 8px 8px 0 0;
-        }
-
-        .menu-item:last-child {
-            border-radius: 0 0 8px 8px;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+        /* Removed hamburger menu styles - now using Bootstrap responsive navbar */
 
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
-            .header {
-                padding: 1rem;
-            }
-
-            .nav-links {
-                display: none;
-            }
-
-            .hamburger-menu {
-                display: block;
-            }
-
             .page-title {
                 font-size: 2.5rem;
             }
@@ -544,64 +341,49 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <!-- Logo Section -->
-        <div class="logo-section">
-            <div class="logo">🎉</div>
-            <div>
-                <a href="/" class="logo-text">EventHub</a>
-                <div class="event-count" th:text="|${events.size()} events in your collection|">0 events in your collection</div>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/" style="color: #667eea;">
+                <i class="bi bi-calendar-event me-2"></i>EventHub
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/my-events">My Events</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/events/create">Create Event</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/profile">Profile</a>
+                    </li>
+                    <li class="nav-item" th:if="${isCurrentUserAdmin}">
+                        <a class="nav-link" href="/admin/users">
+                            <i class="bi bi-people-fill me-1"></i>Manage Users
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <form action="/logout" method="post" style="display: inline;">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-box-arrow-right me-1"></i>Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
             </div>
         </div>
+    </nav>
 
-        <!-- Navigation Section -->
-        <div class="nav-section">
-            <!-- Navigation Links -->
-            <nav class="nav-links">
-                <a href="/" class="nav-link">All Events</a>
-                <a href="/my-events" class="nav-link active">My Events</a>
-                <a href="/events/create" class="nav-link">Create Event</a>
-                <a href="/" class="nav-link homepage-btn">🏠</a>
-            </nav>
-
-            <!-- Auth Section -->
-            <div sec:authorize="isAnonymous()" class="auth-buttons">
-                <a href="/login" class="auth-btn login-btn">Log In</a>
-                <a href="/register" class="auth-btn register-btn">Sign Up</a>
-            </div>
-
-            <!-- Welcome message and logout for authenticated users -->
-            <div class="auth-buttons" sec:authorize="isAuthenticated()">
-                <span class="welcome-message">
-                    Welcome <span sec:authentication="name">User</span>!
-                </span>
-                <form method="post" th:action="@{/logout}" style="display: inline;">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                    <button type="submit" class="auth-btn logout-btn">Log Out</button>
-                </form>
-            </div>
-
-            <!-- Hamburger Menu for Mobile -->
-            <div class="hamburger-menu">
-                <button class="hamburger-btn" onclick="toggleMenu()">☰</button>
-                <div class="dropdown-menu" id="dropdownMenu">
-                    <a href="/" class="menu-item">🏠 Home</a>
-                    <a href="/my-events" class="menu-item">📅 My Events</a>
-                    <a href="/events/create" class="menu-item">➕ Create Event</a>
-                    
-                    <!-- Admin-only menu item -->
-                    <div th:if="${isCurrentUserAdmin}">
-                        <a href="/admin/users" class="menu-item">👥 Manage Users</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content -->
     <main class="main-content">
-        <!-- Page Header -->
         <div class="page-header">
             <h1 class="page-title">My Events</h1>
             <p class="page-subtitle" sec:authorize="isAnonymous()">
@@ -609,7 +391,6 @@
             </p>
         </div>
 
-        <!-- Flash Messages -->
         <div th:if="${successMessage}" class="flash-message flash-success" th:text="${successMessage}"></div>
         <div th:if="${errorMessage}" class="flash-message flash-error" th:text="${errorMessage}"></div>
 
@@ -620,7 +401,6 @@
             </a>
         </div>
 
-        <!-- Events Container -->
         <div th:if="${events != null and !events.empty}" class="events-container">
             <div class="event-card" th:each="event : ${events}">
                 <div class="event-header">
@@ -690,7 +470,6 @@
             </div>
         </div>
 
-        <!-- Empty State -->
         <div th:if="${events == null or events.empty}" class="empty-state" sec:authorize="isAuthenticated()">
             <h3>No Events Created Yet</h3>
             <p>You haven't created any events yet. Start by creating your first event!</p>
@@ -704,30 +483,8 @@
         </div>
     </main>
 
-    <script>
-        // Mobile menu toggle
-        function toggleMenu() {
-            const dropdown = document.getElementById('dropdownMenu');
-            dropdown.classList.toggle('active');
-        }
-
-        // Close menu when clicking outside
-        document.addEventListener('click', function(e) {
-            const hamburgerMenu = document.querySelector('.hamburger-menu');
-            const dropdown = document.getElementById('dropdownMenu');
-            
-            if (hamburgerMenu && !hamburgerMenu.contains(e.target)) {
-                dropdown.classList.remove('active');
-            }
-        });
-
-        // Close menu when pressing escape key
-        document.addEventListener('keydown', function(e) {
-            const dropdown = document.getElementById('dropdownMenu');
-            if (e.key === 'Escape') {
-                dropdown.classList.remove('active');
-            }
-        });
-    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

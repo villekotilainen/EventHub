@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,13 +25,15 @@ import eventhub.main.domain.EHUser;
 import eventhub.main.domain.Event;
 import eventhub.main.domain.EventType;
 import eventhub.main.domain.UserRole;
+import eventhub.main.domain.Vote;
 import eventhub.main.repositories.EventRepository;
 import eventhub.main.repositories.EventTypeRepository;
 import eventhub.main.repositories.EHUserRepository;
 import eventhub.main.repositories.UserRoleRepository;
 import eventhub.main.service.EventService;
 import eventhub.main.service.PasswordResetService;
-import jakarta.servlet.http.HttpSession;
+import eventhub.main.service.VoteService;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
@@ -55,6 +58,12 @@ public class HomeController {
     
     @Autowired
     private PasswordResetService passwordResetService;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private VoteService voteService;
 
     @ModelAttribute
     public void addGlobalAttributes(Model model, Authentication authentication) {
@@ -350,62 +359,85 @@ public class HomeController {
     }
 
     @PostMapping("/vote/{eventId}/upvote")
-    public ResponseEntity<String> upvoteEvent(@PathVariable Long eventId, HttpSession session) {
-        // Check if user has already voted for this event
-        @SuppressWarnings("unchecked")
-        Set<Long> votedEvents = (Set<Long>) session.getAttribute("votedEvents");
-        if (votedEvents == null) {
-            votedEvents = new HashSet<>();
+    public ResponseEntity<String> upvoteEvent(@PathVariable Long eventId, Authentication authentication) {
+        // Check if user is authenticated
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).body("You must be logged in to vote");
         }
         
-        if (votedEvents.contains(eventId)) {
-            return ResponseEntity.badRequest().body("You have already voted for this event");
+        String username = authentication.getName();
+        Optional<EHUser> userOptional = ehUserRepository.findByUsername(username);
+        if (!userOptional.isPresent()) {
+            return ResponseEntity.status(401).body("User not found");
         }
         
         Optional<Event> eventOptional = eventRepository.findById(eventId);
-        if (eventOptional.isPresent()) {
-            Event event = eventOptional.get();
-            Integer currentUpvotes = event.getEventUpVote();
-            event.setEventUpVote(currentUpvotes != null ? currentUpvotes + 1 : 1);
-            eventRepository.save(event);
-            
-            // Mark this event as voted by this session
-            votedEvents.add(eventId);
-            session.setAttribute("votedEvents", votedEvents);
-            
-            return ResponseEntity.ok("Upvote successful");
-        } else {
+        if (!eventOptional.isPresent()) {
             return ResponseEntity.notFound().build();
+        }
+        
+        try {
+            voteService.voteForEvent(userOptional.get(), eventOptional.get(), true);
+            return ResponseEntity.ok("Vote successful");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to vote: " + e.getMessage());
         }
     }
 
     @PostMapping("/vote/{eventId}/downvote")
-    public ResponseEntity<String> downvoteEvent(@PathVariable Long eventId, HttpSession session) {
-        // Check if user has already voted for this event
-        @SuppressWarnings("unchecked")
-        Set<Long> votedEvents = (Set<Long>) session.getAttribute("votedEvents");
-        if (votedEvents == null) {
-            votedEvents = new HashSet<>();
+    public ResponseEntity<String> downvoteEvent(@PathVariable Long eventId, Authentication authentication) {
+        // Check if user is authenticated
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).body("You must be logged in to vote");
         }
         
-        if (votedEvents.contains(eventId)) {
-            return ResponseEntity.badRequest().body("You have already voted for this event");
+        String username = authentication.getName();
+        Optional<EHUser> userOptional = ehUserRepository.findByUsername(username);
+        if (!userOptional.isPresent()) {
+            return ResponseEntity.status(401).body("User not found");
         }
         
         Optional<Event> eventOptional = eventRepository.findById(eventId);
-        if (eventOptional.isPresent()) {
-            Event event = eventOptional.get();
-            Integer currentDownvotes = event.getEventDownVote();
-            event.setEventDownVote(currentDownvotes != null ? currentDownvotes + 1 : 1);
-            eventRepository.save(event);
-            
-            // Mark this event as voted by this session
-            votedEvents.add(eventId);
-            session.setAttribute("votedEvents", votedEvents);
-            
-            return ResponseEntity.ok("Downvote successful");
-        } else {
+        if (!eventOptional.isPresent()) {
             return ResponseEntity.notFound().build();
+        }
+        
+        try {
+            voteService.voteForEvent(userOptional.get(), eventOptional.get(), false);
+            return ResponseEntity.ok("Vote successful");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to vote: " + e.getMessage());
+        }
+    }
+    
+    @GetMapping("/vote/{eventId}/status")
+    public ResponseEntity<String> getVoteStatus(@PathVariable Long eventId, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.ok("not_logged_in");
+        }
+        
+        String username = authentication.getName();
+        Optional<EHUser> userOptional = ehUserRepository.findByUsername(username);
+        if (!userOptional.isPresent()) {
+            return ResponseEntity.ok("user_not_found");
+        }
+        
+        Optional<Event> eventOptional = eventRepository.findById(eventId);
+        if (!eventOptional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        try {
+            Vote userVote = voteService.getUserVoteForEvent(userOptional.get(), eventOptional.get());
+            if (userVote == null) {
+                return ResponseEntity.ok("no_vote");
+            } else if (userVote.isUpvote()) {
+                return ResponseEntity.ok("upvote");
+            } else {
+                return ResponseEntity.ok("downvote");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("error");
         }
     }
     
@@ -499,7 +531,7 @@ public class HomeController {
             String deletedUsername = userToDelete.getUsername();
             String deletedName = userToDelete.getFirstname() + " " + userToDelete.getLastname();
             
-            // Delete all events created by this user first (to maintain referential integrity)
+            // Delete all events created by this user first
             List<Event> userEvents = eventRepository.findByEHUserUsername(deletedUsername);
             eventRepository.deleteAll(userEvents);
             
@@ -703,6 +735,187 @@ public class HomeController {
         }
         
         return "redirect:/";
+    }
+    
+    // === PROFILE MANAGEMENT FUNCTIONALITY ===
+    
+    /**
+     * Show user profile page
+     */
+    @GetMapping("/profile")
+    public String showProfile(Model model, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";
+        }
+        
+        String username = authentication.getName();
+        System.out.println("DEBUG: Looking for user with username: " + username);
+        
+        Optional<EHUser> userOptional = ehUserRepository.findByUsername(username);
+        
+        if (!userOptional.isPresent()) {
+            System.out.println("DEBUG: User not found with username: " + username);
+            return "redirect:/login";
+        }
+        
+        EHUser user = userOptional.get();
+        System.out.println("DEBUG: Found user: " + user.getUsername() + ", Role: " + (user.getRole() != null ? user.getRole().getRoleName() : "null"));
+        
+        model.addAttribute("user", user);
+        
+        // Get user's event statistics - handle null safety
+        List<Event> userEvents = eventRepository.findByEHUserUsername(username);
+        if (userEvents == null) {
+            userEvents = List.of(); // Empty list if null
+        }
+        model.addAttribute("eventCount", userEvents.size());
+        
+        // Calculate total votes received on user's events - with null safety
+        int totalUpvotes = userEvents.stream()
+            .mapToInt(event -> event != null && event.getEventUpVote() != null ? event.getEventUpVote() : 0)
+            .sum();
+        int totalDownvotes = userEvents.stream()
+            .mapToInt(event -> event != null && event.getEventDownVote() != null ? event.getEventDownVote() : 0)
+            .sum();
+        
+        model.addAttribute("totalUpvotes", totalUpvotes);
+        model.addAttribute("totalDownvotes", totalDownvotes);
+        
+        return "profile";
+    }
+    
+    /**
+     * Show edit profile form
+     */
+    @GetMapping("/profile/edit")
+    public String showEditProfile(Model model, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";
+        }
+        
+        String username = authentication.getName();
+        Optional<EHUser> userOptional = ehUserRepository.findByUsername(username);
+        
+        if (!userOptional.isPresent()) {
+            return "redirect:/login";
+        }
+        
+        EHUser user = userOptional.get();
+        model.addAttribute("user", user);
+        
+        return "edit-profile";
+    }
+    
+    /**
+     * Handle profile update
+     */
+    @PostMapping("/profile/update")
+    public String updateProfile(@RequestParam("firstname") String firstname,
+                               @RequestParam("lastname") String lastname,
+                               @RequestParam("email") String email,
+                               @RequestParam(value = "currentPassword", required = false) String currentPassword,
+                               @RequestParam(value = "newPassword", required = false) String newPassword,
+                               @RequestParam(value = "confirmPassword", required = false) String confirmPassword,
+                               Authentication authentication,
+                               Model model,
+                               RedirectAttributes redirectAttributes) {
+        
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";
+        }
+        
+        String username = authentication.getName();
+        Optional<EHUser> userOptional = ehUserRepository.findByUsername(username);
+        
+        if (!userOptional.isPresent()) {
+            return "redirect:/login";
+        }
+        
+        EHUser user = userOptional.get();
+        
+        // Validate required fields
+        if (firstname == null || firstname.trim().isEmpty()) {
+            model.addAttribute("errorMessage", "First name is required.");
+            model.addAttribute("user", user);
+            return "edit-profile";
+        }
+        
+        if (lastname == null || lastname.trim().isEmpty()) {
+            model.addAttribute("errorMessage", "Last name is required.");
+            model.addAttribute("user", user);
+            return "edit-profile";
+        }
+        
+        if (email == null || email.trim().isEmpty()) {
+            model.addAttribute("errorMessage", "Email is required.");
+            model.addAttribute("user", user);
+            return "edit-profile";
+        }
+        
+        // Validate email format
+        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            model.addAttribute("errorMessage", "Please enter a valid email address.");
+            model.addAttribute("user", user);
+            return "edit-profile";
+        }
+        
+        // Check if email is already taken by another user
+        Optional<EHUser> existingUserWithEmail = ehUserRepository.findByEmail(email);
+        if (existingUserWithEmail.isPresent() && !existingUserWithEmail.get().getId().equals(user.getId())) {
+            model.addAttribute("errorMessage", "This email address is already in use by another account.");
+            model.addAttribute("user", user);
+            return "edit-profile";
+        }
+        
+        // Handle password change if provided
+        if (newPassword != null && !newPassword.trim().isEmpty()) {
+            // Current password is required for password change
+            if (currentPassword == null || currentPassword.trim().isEmpty()) {
+                model.addAttribute("errorMessage", "Current password is required to change password.");
+                model.addAttribute("user", user);
+                return "edit-profile";
+            }
+            
+            // Verify current password
+            if (!passwordEncoder.matches(currentPassword, user.getPasswordHash())) {
+                model.addAttribute("errorMessage", "Current password is incorrect.");
+                model.addAttribute("user", user);
+                return "edit-profile";
+            }
+            
+            // Validate new password
+            if (!newPassword.equals(confirmPassword)) {
+                model.addAttribute("errorMessage", "New passwords do not match.");
+                model.addAttribute("user", user);
+                return "edit-profile";
+            }
+            
+            // Validate password strength
+            if (!passwordResetService.isValidPassword(newPassword)) {
+                model.addAttribute("errorMessage", 
+                    "Password must be at least 8 characters long and contain uppercase, lowercase, number, and special character.");
+                model.addAttribute("user", user);
+                return "edit-profile";
+            }
+            
+            // Update password
+            user.setPasswordHash(passwordEncoder.encode(newPassword));
+        }
+        
+        // Update user information
+        user.setFirstname(firstname.trim());
+        user.setLastname(lastname.trim());
+        user.setEmail(email.trim());
+        
+        try {
+            ehUserRepository.save(user);
+            redirectAttributes.addFlashAttribute("successMessage", "Profile updated successfully!");
+            return "redirect:/profile";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Failed to update profile. Please try again.");
+            model.addAttribute("user", user);
+            return "edit-profile";
+        }
     }
     
     // === PASSWORD RESET FUNCTIONALITY ===
