@@ -36,6 +36,7 @@ import eventhub.main.service.VoteService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 
 @Controller
@@ -64,6 +65,9 @@ public class HomeController {
     
     @Autowired
     private VoteService voteService;
+
+    @Value("${app.base-url}")
+    private String appBaseUrl;
 
     @ModelAttribute
     public void addGlobalAttributes(Model model, Authentication authentication) {
@@ -937,8 +941,9 @@ public class HomeController {
                                        Model model,
                                        RedirectAttributes redirectAttributes) {
         try {
-            // Get base URL for reset link
-            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+            // Use configured base URL instead of deriving from request
+            // This ensures correct URL generation in cloud environments
+            String baseUrl = appBaseUrl;
             
             // Create reset token and send email
             boolean success = passwordResetService.createPasswordResetTokenForUser(email, baseUrl);
