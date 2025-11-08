@@ -129,10 +129,10 @@ public class PasswordResetService {
             email.setText(message);
             mailSender.send(email);
             
-            System.out.println("Password reset email sent to: " + user.getEmail());
+            System.out.println("Password reset email sent successfully to: " + user.getEmail());
         } catch (Exception e) {
             System.err.println("Failed to send password reset email: " + e.getMessage());
-            e.printStackTrace();
+            throw new RuntimeException("Failed to send email", e);
         }
     }
     
@@ -152,4 +152,5 @@ public class PasswordResetService {
         
         return hasUpper && hasLower && hasDigit && hasSpecial;
     }
+    
 }
