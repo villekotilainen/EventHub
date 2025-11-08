@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - EventHub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .edit-profile-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 700px;
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-section h5 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-group {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .btn-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 2rem;
+            color: white;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+        
+        .btn-secondary-custom {
+            background: #6c757d;
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 2rem;
+            color: white;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-secondary-custom:hover {
+            background: #545b62;
+            transform: translateY(-2px);
+            color: white;
+        }
+        
+        .alert-custom {
+            border-radius: 15px;
+            border: none;
+            padding: 1rem 1.5rem;
+        }
+        
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .password-requirements {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+            padding: 0.5rem;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+        
+        .required-field {
+            color: #dc3545;
+        }
+        
+        .form-divider {
+            border-top: 1px solid #dee2e6;
+            margin: 1.5rem 0;
+            padding-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/" style="color: #667eea;">
+                <i class="bi bi-calendar-event me-2"></i>EventHub
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my-events">My Events</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/profile">Profile</a>
+                    </li>
+                    <li class="nav-item" th:if="${isCurrentUserAdmin}">
+                        <a class="nav-link" href="/admin/users">
+                            <i class="bi bi-people-fill me-1"></i>Manage Users
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <form action="/logout" method="post" style="display: inline;">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-box-arrow-right me-1"></i>Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="edit-profile-container">
+            <!-- Error Messages -->
+            <div th:if="${errorMessage}" class="alert alert-danger alert-custom alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Form Header -->
+            <div class="form-header">
+                <h2>
+                    <i class="bi bi-pencil-square me-2" style="color: #667eea;"></i>
+                    Edit Profile
+                </h2>
+                <p class="text-muted mb-0">Update your personal information and password</p>
+            </div>
+
+            <!-- Edit Profile Form -->
+            <form action="/profile/update" method="post">
+                <!-- CSRF Token for security -->
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                
+                <!-- Personal Information Section -->
+                <div class="form-section">
+                    <h5>
+                        <i class="bi bi-person-lines-fill"></i>
+                        Personal Information
+                    </h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="firstname" class="form-label">
+                                    <i class="bi bi-person"></i>
+                                    First Name <span class="required-field">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="firstname" name="firstname" 
+                                       th:value="${user.firstname}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="lastname" class="form-label">
+                                    <i class="bi bi-person"></i>
+                                    Last Name <span class="required-field">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="lastname" name="lastname" 
+                                       th:value="${user.lastname}" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label">
+                            <i class="bi bi-envelope"></i>
+                            Email Address <span class="required-field">*</span>
+                        </label>
+                        <input type="email" class="form-control" id="email" name="email" 
+                               th:value="${user.email}" required>
+                    </div>
+                </div>
+
+                <!-- Password Section -->
+                <div class="form-section">
+                    <h5>
+                        <i class="bi bi-shield-lock"></i>
+                        Change Password
+                    </h5>
+                    <p class="text-muted small mb-3">Leave password fields empty if you don't want to change your password</p>
+                    
+                    <div class="form-group">
+                        <label for="currentPassword" class="form-label">
+                            <i class="bi bi-key"></i>
+                            Current Password
+                        </label>
+                        <input type="password" class="form-control" id="currentPassword" name="currentPassword" 
+                               placeholder="Enter your current password">
+                    </div>
+                    
+                    <div class="form-divider"></div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="newPassword" class="form-label">
+                                    <i class="bi bi-lock"></i>
+                                    New Password
+                                </label>
+                                <input type="password" class="form-control" id="newPassword" name="newPassword" 
+                                       placeholder="Enter new password">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="confirmPassword" class="form-label">
+                                    <i class="bi bi-lock-fill"></i>
+                                    Confirm New Password
+                                </label>
+                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" 
+                                       placeholder="Confirm new password">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="password-requirements">
+                        <strong>Password Requirements:</strong><br>
+                        <i class="bi bi-check-circle text-success me-1"></i> At least 8 characters long<br>
+                        <i class="bi bi-check-circle text-success me-1"></i> Contains uppercase letter (A-Z)<br>
+                        <i class="bi bi-check-circle text-success me-1"></i> Contains lowercase letter (a-z)<br>
+                        <i class="bi bi-check-circle text-success me-1"></i> Contains number (0-9)<br>
+                        <i class="bi bi-check-circle text-success me-1"></i> Contains special character (!@#$%^&*)
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="text-center">
+                    <button type="submit" class="btn-custom me-3">
+                        <i class="bi bi-check-circle"></i>
+                        Update Profile
+                    </button>
+                    <a href="/profile" class="btn-secondary-custom">
+                        <i class="bi bi-x-circle"></i>
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Password Validation Script -->
+    <script>
+        document.getElementById('newPassword').addEventListener('input', function() {
+            const password = this.value;
+            const confirmPassword = document.getElementById('confirmPassword');
+            
+            // Reset confirm password if new password changes
+            if (confirmPassword.value && confirmPassword.value !== password) {
+                confirmPassword.setCustomValidity('Passwords do not match');
+            } else {
+                confirmPassword.setCustomValidity('');
+            }
+        });
+        
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const password = document.getElementById('newPassword').value;
+            const confirmPassword = this.value;
+            
+            if (password && confirmPassword && password !== confirmPassword) {
+                this.setCustomValidity('Passwords do not match');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+        
+        // Form validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const currentPassword = document.getElementById('currentPassword').value;
+            
+            // If trying to change password, validate requirements
+            if (newPassword || confirmPassword) {
+                if (!currentPassword) {
+                    alert('Current password is required to change password');
+                    e.preventDefault();
+                    return;
+                }
+                
+                if (newPassword !== confirmPassword) {
+                    alert('New passwords do not match');
+                    e.preventDefault();
+                    return;
+                }
+                
+                // Password strength validation
+                const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+                if (!passwordRegex.test(newPassword)) {
+                    alert('Password must be at least 8 characters and contain uppercase, lowercase, number, and special character');
+                    e.preventDefault();
+                    return;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

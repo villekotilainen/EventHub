@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventHub - Create New Event</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 4rem;
+        }
+        
+        .header-right {
+            margin-left: auto;
+            margin-right: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .header-left {
+            text-align: left;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+        
+        .header p {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            padding: 3rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #667eea;
+            margin-top: 2rem;
+        }
+        
+        .form-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin: 0 0 2rem 0;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        .required::after {
+            content: " *";
+            color: #f56565;
+            font-weight: bold;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .datetime-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        @media (max-width: 600px) {
+            .datetime-group {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .cancel-btn {
+            background: #f7fafc;
+            color: #666;
+            padding: 1rem 2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        .cancel-btn:hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 600px) {
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .error-message {
+            color: #f56565;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        
+        .form-group.error input,
+        .form-group.error select,
+        .form-group.error textarea {
+            border-color: #f56565;
+            box-shadow: 0 0 0 3px rgba(245, 101, 101, 0.1);
+        }
+        
+        .form-group.error .error-message {
+            display: block;
+        }
+        
+        .help-text {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+        
+        /* Navigation back to home */
+        .back-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            opacity: 0.9;
+            transition: opacity 0.3s ease;
+        }
+        
+        .back-link:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+        
+        /* Form validation styles */
+        .valid-feedback {
+            color: #48bb78;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        
+        .form-group.valid input,
+        .form-group.valid select,
+        .form-group.valid textarea {
+            border-color: #48bb78;
+            box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
+        }
+        
+        .form-group.valid .valid-feedback {
+            display: block;
+        }
+        
+        /* Character counter for description */
+        .char-counter {
+            text-align: right;
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+        
+        .char-counter.warning {
+            color: #f56565;
+        }
+        
+        /* Calendar styles */
+        .date-range-picker {
+            position: relative;
+        }
+        
+        .calendar-popup {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            z-index: 1000;
+            display: none;
+            padding: 1rem;
+            min-width: 280px;
+        }
+        
+        .calendar-popup.active {
+            display: block;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .calendar-nav {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            color: #667eea;
+        }
+        
+        .calendar-nav:hover {
+            background: #f7fafc;
+        }
+        
+        .calendar-title {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            text-align: center;
+        }
+        
+        .calendar-day-header {
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #666;
+        }
+        
+        .calendar-day {
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        
+        .calendar-day:hover {
+            background: #e6f3ff;
+        }
+        
+        .calendar-day.selected {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+        }
+        
+        .calendar-day.in-range {
+            background: rgba(102, 126, 234, 0.2);
+            color: #2d3748;
+        }
+        
+        .calendar-day.other-month {
+            color: #ccc;
+        }
+        
+        .calendar-day.past-date {
+            color: #ccc;
+            cursor: not-allowed !important;
+            opacity: 0.5;
+        }
+        
+        .calendar-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .calendar-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        
+        .calendar-btn.clear {
+            background: #f7fafc;
+            color: #666;
+        }
+        
+        .calendar-btn.clear:hover {
+            background: #e2e8f0;
+        }
+        
+        .calendar-btn.apply {
+            background: #667eea;
+            color: white;
+        }
+        
+        .calendar-btn.apply:hover {
+            background: #5a67d8;
+        }
+        
+        /* Event Type Categories Styles */
+        .event-type-categories {
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background: #f9fafb;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        
+        .category-section {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #667eea;
+        }
+        
+        .category-title {
+            margin: 0 0 0.75rem 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2d3748;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .category-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.75rem;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0;
+        }
+        
+        .event-type-checkbox {
+            width: auto !important;
+            margin: 0;
+            accent-color: #667eea;
+            transform: scale(1.1);
+        }
+        
+        .checkbox-label {
+            font-weight: 500;
+            color: #2d3748;
+            cursor: pointer;
+            margin: 0;
+            font-size: 0.95rem;
+            transition: color 0.2s ease;
+        }
+        
+        .checkbox-label:hover {
+            color: #667eea;
+        }
+        
+        .event-type-categories:focus-within {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-group.error .event-type-categories {
+            border-color: #f56565;
+            box-shadow: 0 0 0 3px rgba(245, 101, 101, 0.1);
+        }
+        
+        .form-group.valid .event-type-categories {
+            border-color: #48bb78;
+            box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
+        }
+        
+        /* Color-coded category borders */
+        .category-section:nth-child(1) {
+            border-left-color: #667eea; /* Professional & Business - Blue */
+        }
+        
+        .category-section:nth-child(2) {
+            border-left-color: #48bb78; /* Education & Learning - Green */
+        }
+        
+        .category-section:nth-child(3) {
+            border-left-color: #ed8936; /* Entertainment & Culture - Orange */
+        }
+        
+        .category-section:nth-child(4) {
+            border-left-color: #38b2ac; /* Community & Social - Teal */
+        }
+        
+        .category-section:nth-child(5) {
+            border-left-color: #9f7aea; /* Sports & Wellness - Purple */
+        }
+        
+        .category-section:nth-child(6) {
+            border-left-color: #f093fb; /* Lifestyle & Hobbies - Pink */
+        }
+        
+        @media (max-width: 1024px) {
+            .event-type-categories {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .event-type-categories {
+                grid-template-columns: 1fr;
+                padding: 0.75rem;
+                gap: 1rem;
+            }
+            
+            .category-checkboxes {
+                grid-template-columns: 1fr;
+            }
+            
+            .category-section {
+                padding: 0.75rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .category-checkboxes {
+                gap: 0.5rem;
+            }
+            
+            .checkbox-item {
+                padding: 0.125rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <h1>🎉 EventHub</h1>
+                <p><a href="/" class="back-link">← Back to Events</a></p>
+            </div>
+            
+            <div class="header-right">
+                <!-- Future: Auth buttons can be added here -->
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="form-container">
+            <h2 class="form-title">Create New Event</h2>
+            
+            <form id="createEventForm" th:action="@{/events}" method="post" th:object="${event}">
+                <!-- Event Name -->
+                <div class="form-group">
+                    <label for="eventName" class="required">Event Name</label>
+                    <input type="text" 
+                           id="eventName" 
+                           name="eventName" 
+                           th:field="*{eventName}"
+                           placeholder="Enter the event name"
+                           maxlength="100"
+                           required>
+                    <div class="error-message">Event name is required</div>
+                </div>
+                
+                <!-- Event Description -->
+                <div class="form-group">
+                    <label for="eventDescription">Event Description</label>
+                    <textarea id="eventDescription" 
+                              name="eventDescription" 
+                              th:field="*{eventDescription}"
+                              placeholder="Describe your event (max 500 characters)"
+                              maxlength="500"></textarea>
+                    <div class="char-counter"><span id="charCount">0</span>/500 characters</div>
+                    <div class="help-text">Provide a detailed description of your event to attract attendees</div>
+                </div>
+                
+                <!-- Event Website -->
+                <div class="form-group">
+                    <label for="eventWebsite">Event Website</label>
+                    <input type="text" 
+                           id="eventWebsite" 
+                           name="eventWebsite" 
+                           th:field="*{eventWebsite}"
+                           placeholder="example.com or https://example.com">
+                    <div class="help-text">Optional: Domain (example.com) or full URL (https://example.com)</div>
+                </div>
+                
+                <!-- Event Date -->
+                <div class="form-group">
+                    <label for="eventDateRange" class="required">Event Date</label>
+                    <div class="date-range-picker">
+                        <input type="text" 
+                               id="eventDateRange" 
+                               name="eventDateRange"
+                               placeholder="Click to select date or date range..."
+                               readonly
+                               required>
+                        <div id="eventDateCalendar" class="calendar-popup"></div>
+                    </div>
+                    <div class="help-text">Select a single date for one-day events or a date range for multi-day events</div>
+                    <div class="error-message">Event date is required</div>
+                </div>
+                
+                <!-- Hidden inputs for backend -->
+                <input type="hidden" id="eventDateStart" name="eventDate">
+                <input type="hidden" id="eventDateEnd" name="eventEndDate">
+                
+                <!-- Time Row -->
+                <div class="form-row">
+                    <!-- Event Start Time -->
+                    <div class="form-group">
+                        <label for="eventStart" class="required">Start Time</label>
+                        <input type="time" 
+                               id="eventStart" 
+                               name="eventStartTime" 
+                               placeholder="HH:MM"
+                               required>
+                        <div class="error-message">Start time is required</div>
+                    </div>
+                    
+                    <!-- Event End Time -->
+                    <div class="form-group">
+                        <label for="eventEnd">End Time</label>
+                        <input type="time" 
+                               id="eventEnd" 
+                               name="eventEndTime" 
+                               placeholder="HH:MM">
+                        <div class="help-text">Optional: For multi-day events, this can be before the start time</div>
+                    </div>
+                </div>
+                
+
+                
+                <!-- Location -->
+                <div class="form-group">
+                    <label for="eventLocation" class="required">Event Location</label>
+                    <input type="text" 
+                           id="eventLocation" 
+                           name="eventLocation" 
+                           th:field="*{eventLocation}"
+                           placeholder="Enter the venue address or location"
+                           required>
+                    <div class="error-message">Event location is required</div>
+                    <div class="help-text">Provide a specific address or recognizable location</div>
+                </div>
+                
+                <!-- Event Types -->
+                <div class="form-group">
+                    <label class="required">Event Types</label>
+                    <div class="event-type-categories" id="eventTypeGroup">
+                            <!-- Professional & Business -->
+                            <div class="category-section">
+                                <h4 class="category-title">Professional & Business</h4>
+                                <div class="category-checkboxes">
+                                    <div th:each="type : ${eventTypes}" 
+                                         th:if="${type.eventTypeName == 'Technology' or type.eventTypeName == 'Business' or type.eventTypeName == 'Networking' or type.eventTypeName == 'Product Launch' or type.eventTypeName == 'Startup Pitch' or type.eventTypeName == 'Investor Meetup' or type.eventTypeName == 'Product Demo' or type.eventTypeName == 'Corporate Training' or type.eventTypeName == 'Career Fair'}" 
+                                         class="checkbox-item">
+                                        <input type="checkbox" 
+                                               th:id="'eventType_' + ${type.id}"
+                                               th:name="'eventTypeIds'"
+                                               th:value="${type.id}"
+                                               class="event-type-checkbox">
+                                        <label th:for="'eventType_' + ${type.id}" 
+                                               th:text="${type.eventTypeName}" 
+                                               class="checkbox-label">Event Type</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Education & Learning -->
+                            <div class="category-section">
+                                <h4 class="category-title">Education & Learning</h4>
+                                <div class="category-checkboxes">
+                                    <div th:each="type : ${eventTypes}" 
+                                         th:if="${type.eventTypeName == 'Education' or type.eventTypeName == 'Workshop' or type.eventTypeName == 'Lecture' or type.eventTypeName == 'Course' or type.eventTypeName == 'Seminar' or type.eventTypeName == 'Certification Program' or type.eventTypeName == 'Bootcamp' or type.eventTypeName == 'Panel Discussion' or type.eventTypeName == 'Study Group'}" 
+                                         class="checkbox-item">
+                                        <input type="checkbox" 
+                                               th:id="'eventType_' + ${type.id}"
+                                               th:name="'eventTypeIds'"
+                                               th:value="${type.id}"
+                                               class="event-type-checkbox">
+                                        <label th:for="'eventType_' + ${type.id}" 
+                                               th:text="${type.eventTypeName}" 
+                                               class="checkbox-label">Event Type</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Entertainment & Culture -->
+                            <div class="category-section">
+                                <h4 class="category-title">Entertainment & Culture</h4>
+                                <div class="category-checkboxes">
+                                    <div th:each="type : ${eventTypes}" 
+                                         th:if="${type.eventTypeName == 'Music' or type.eventTypeName == 'Concert' or type.eventTypeName == 'Music Festival' or type.eventTypeName == 'Theater' or type.eventTypeName == 'Art Exhibition' or type.eventTypeName == 'Film Festival' or type.eventTypeName == 'Film Screening' or type.eventTypeName == 'Movie Premiere' or type.eventTypeName == 'Comedy Show' or type.eventTypeName == 'Dance Performance' or type.eventTypeName == 'Film Workshop' or type.eventTypeName == 'Cultural Festival' or type.eventTypeName == 'Literature Reading'}" 
+                                         class="checkbox-item">
+                                        <input type="checkbox" 
+                                               th:id="'eventType_' + ${type.id}"
+                                               th:name="'eventTypeIds'"
+                                               th:value="${type.id}"
+                                               class="event-type-checkbox">
+                                        <label th:for="'eventType_' + ${type.id}" 
+                                               th:text="${type.eventTypeName}" 
+                                               class="checkbox-label">Event Type</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Community & Social -->
+                            <div class="category-section">
+                                <h4 class="category-title">Community & Social</h4>
+                                <div class="category-checkboxes">
+                                    <div th:each="type : ${eventTypes}" 
+                                         th:if="${type.eventTypeName == 'Community' or type.eventTypeName == 'Food Festival' or type.eventTypeName == 'Charity' or type.eventTypeName == 'Political' or type.eventTypeName == 'Virtual Event' or type.eventTypeName == 'Meetup' or type.eventTypeName == 'Fundraiser' or type.eventTypeName == 'Public Talk' or type.eventTypeName == 'Town Hall' or type.eventTypeName == 'Awareness Campaign'}" 
+                                         class="checkbox-item">
+                                        <input type="checkbox" 
+                                               th:id="'eventType_' + ${type.id}"
+                                               th:name="'eventTypeIds'"
+                                               th:value="${type.id}"
+                                               class="event-type-checkbox">
+                                        <label th:for="'eventType_' + ${type.id}" 
+                                               th:text="${type.eventTypeName}" 
+                                               class="checkbox-label">Event Type</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sports & Wellness -->
+                            <div class="category-section">
+                                <h4 class="category-title">Sports & Wellness</h4>
+                                <div class="category-checkboxes">
+                                    <div th:each="type : ${eventTypes}" 
+                                         th:if="${type.eventTypeName == 'Sports' or type.eventTypeName == 'Wellness' or type.eventTypeName == 'Gaming' or type.eventTypeName == 'Fitness Challenge' or type.eventTypeName == 'Marathon' or type.eventTypeName == 'Yoga Retreat' or type.eventTypeName == 'Outdoor Adventure' or type.eventTypeName == 'E-sports Tournament'}" 
+                                         class="checkbox-item">
+                                        <input type="checkbox" 
+                                               th:id="'eventType_' + ${type.id}"
+                                               th:name="'eventTypeIds'"
+                                               th:value="${type.id}"
+                                               class="event-type-checkbox">
+                                        <label th:for="'eventType_' + ${type.id}" 
+                                               th:text="${type.eventTypeName}" 
+                                               class="checkbox-label">Event Type</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Lifestyle & Hobbies -->
+                            <div class="category-section">
+                                <h4 class="category-title">Lifestyle & Hobbies</h4>
+                                <div class="category-checkboxes">
+                                    <div th:each="type : ${eventTypes}" 
+                                         th:if="${type.eventTypeName == 'Fashion & Beauty' or type.eventTypeName == 'Cooking' or type.eventTypeName == 'DIY & Crafts' or type.eventTypeName == 'Photography' or type.eventTypeName == 'Gardening' or type.eventTypeName == 'Travel' or type.eventTypeName == 'Home & Design' or type.eventTypeName == 'Book Club' or type.eventTypeName == 'Pet Events'}" 
+                                         class="checkbox-item">
+                                        <input type="checkbox" 
+                                               th:id="'eventType_' + ${type.id}"
+                                               th:name="'eventTypeIds'"
+                                               th:value="${type.id}"
+                                               class="event-type-checkbox">
+                                        <label th:for="'eventType_' + ${type.id}" 
+                                               th:text="${type.eventTypeName}" 
+                                               class="checkbox-label">Event Type</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="help-text">Select one or more event types that best describe your event</div>
+                        <div class="error-message">Please select at least one event type</div>
+                </div>
+                
+                <!-- Submit Buttons -->
+                <div class="button-group">
+                    <a href="/" class="cancel-btn">Cancel</a>
+                    <button type="submit" class="submit-btn">Create Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Calendar state
+        let selectedStartDate = null;
+        let selectedEndDate = null;
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        
+        // Form validation and enhancement
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('createEventForm');
+            const descriptionTextarea = document.getElementById('eventDescription');
+            const charCount = document.getElementById('charCount');
+            const eventDateRangeInput = document.getElementById('eventDateRange');
+            const eventStartInput = document.getElementById('eventStart');
+            const eventEndInput = document.getElementById('eventEnd');
+            
+            // Character counter for description
+            function updateCharCount() {
+                const count = descriptionTextarea.value.length;
+                charCount.textContent = count;
+                
+                const counter = document.querySelector('.char-counter');
+                if (count > 450) {
+                    counter.classList.add('warning');
+                } else {
+                    counter.classList.remove('warning');
+                }
+            }
+            
+            if (descriptionTextarea) {
+                descriptionTextarea.addEventListener('input', updateCharCount);
+                updateCharCount(); // Initialize count
+            }
+            
+            // Calendar functionality
+            if (eventDateRangeInput) {
+                eventDateRangeInput.addEventListener('click', function() {
+                    const calendar = document.getElementById('eventDateCalendar');
+                    calendar.classList.toggle('active');
+                    if (calendar.classList.contains('active')) {
+                        createEventCalendar();
+                    }
+                });
+            }
+            
+            // Close calendar when clicking outside
+            document.addEventListener('click', function(e) {
+                const dateRangePicker = document.querySelector('.date-range-picker');
+                const calendar = document.getElementById('eventDateCalendar');
+                if (dateRangePicker && !dateRangePicker.contains(e.target)) {
+                    calendar.classList.remove('active');
+                }
+            });
+            
+            // Update start time minimum when date changes
+            function updateStartTimeMin() {
+                if (selectedStartDate && eventStartInput) {
+                    const now = new Date();
+                    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                    const eventDate = new Date(selectedStartDate.getFullYear(), selectedStartDate.getMonth(), selectedStartDate.getDate());
+                    
+                    // If selected date is today, set minimum time to current time
+                    if (eventDate.getTime() === today.getTime()) {
+                        const currentTime = now.toTimeString().slice(0, 5); // HH:MM format
+                        eventStartInput.min = currentTime;
+                    } else {
+                        eventStartInput.removeAttribute('min');
+                    }
+                }
+            }
+            
+            // Update end time minimum when start time changes
+            function updateEndTimeMin() {
+                if (eventStartInput && eventEndInput) {
+                    const startTime = eventStartInput.value;
+                    const isMultiDay = selectedStartDate && selectedEndDate && 
+                                     selectedStartDate.getTime() !== selectedEndDate.getTime();
+                    
+                    if (startTime && !isMultiDay) {
+                        // Only set minimum for same-day events
+                        eventEndInput.min = startTime;
+                    } else {
+                        // Remove minimum for multi-day events
+                        eventEndInput.removeAttribute('min');
+                    }
+                }
+            }
+            
+            // Validate end time is after start time (only for same-day events)
+            function validateEndTime() {
+                if (eventStartInput && eventEndInput && 
+                    eventStartInput.value !== '' && eventEndInput.value !== '') {
+                    const startTime = eventStartInput.value;
+                    const endTime = eventEndInput.value;
+                    
+                    // If it's a multi-day event (has both start and end dates), allow any end time
+                    const isMultiDay = selectedStartDate && selectedEndDate && 
+                                     selectedStartDate.getTime() !== selectedEndDate.getTime();
+                    
+                    if (isMultiDay) {
+                        // For multi-day events, end time can be before start time
+                        const formGroup = eventEndInput.closest('.form-group');
+                        formGroup.classList.remove('error');
+                        formGroup.classList.add('valid');
+                    } else {
+                        // For same-day events, end time must be after start time
+                        validateField(eventEndInput, 
+                            () => endTime > startTime, 
+                            'End time must be after start time'
+                        );
+                    }
+                }
+            }
+            
+            if (eventStartInput) {
+                eventStartInput.addEventListener('change', function() {
+                    updateEndTimeMin();
+                    validateEndTime();
+                });
+            }
+            
+            if (eventEndInput) {
+                eventEndInput.addEventListener('change', validateEndTime);
+            }
+            
+            // Form validation
+            function validateField(field, validationFn, errorMessage) {
+                const formGroup = field.closest('.form-group');
+                const errorDiv = formGroup.querySelector('.error-message');
+                
+                if (validationFn()) {
+                    formGroup.classList.remove('error');
+                    formGroup.classList.add('valid');
+                    if (errorDiv) errorDiv.textContent = '';
+                    return true;
+                } else {
+                    formGroup.classList.remove('valid');
+                    formGroup.classList.add('error');
+                    if (errorDiv) errorDiv.textContent = errorMessage;
+                    return false;
+                }
+            }
+            
+            // Calendar creation function
+            function createEventCalendar() {
+                const calendar = document.getElementById('eventDateCalendar');
+                const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'];
+                const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                
+                const firstDay = new Date(currentYear, currentMonth, 1);
+                const startDate = new Date(firstDay);
+                startDate.setDate(startDate.getDate() - firstDay.getDay());
+                
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                calendar.innerHTML = `
+                    <div class="calendar-header">
+                        <button class="calendar-nav" onclick="changeEventMonth(-1, event)" type="button">❮</button>
+                        <div class="calendar-title">${monthNames[currentMonth]} ${currentYear}</div>
+                        <button class="calendar-nav" onclick="changeEventMonth(1, event)" type="button">❯</button>
+                    </div>
+                    <div class="calendar-grid">
+                        ${dayNames.map(day => `<div class="calendar-day-header">${day}</div>`).join('')}
+                        ${Array.from({length: 42}, (_, i) => {
+                            const date = new Date(startDate);
+                            date.setDate(startDate.getDate() + i);
+                            const isCurrentMonth = date.getMonth() === currentMonth;
+                            const isPast = date < today;
+                            const isSelected = (selectedStartDate && date.toDateString() === selectedStartDate.toDateString()) ||
+                                             (selectedEndDate && date.toDateString() === selectedEndDate.toDateString());
+                            const isInRange = selectedStartDate && selectedEndDate && 
+                                            date > selectedStartDate && date < selectedEndDate;
+                            
+                            const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                            return `<div class="calendar-day ${!isCurrentMonth ? 'other-month' : ''} ${isPast ? 'past-date' : ''}
+                                        ${isSelected ? 'selected' : ''} ${isInRange ? 'in-range' : ''}"
+                                        onclick="${!isPast ? `selectEventDate('${dateString}', event)` : ''}" 
+                                        style="${isPast ? 'cursor: not-allowed; opacity: 0.5;' : ''}">${date.getDate()}</div>`;
+                        }).join('')}
+                    </div>
+                    <div class="calendar-actions">
+                        <button class="calendar-btn clear" onclick="clearEventDateRange(event)" type="button">Clear</button>
+                        <button class="calendar-btn apply" onclick="applyEventDateRange(event)" type="button">Apply</button>
+                    </div>
+                `;
+            }
+            
+            // Global calendar functions
+            window.changeEventMonth = function(direction, event) {
+                if (event) event.stopPropagation();
+                currentMonth += direction;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                } else if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                createEventCalendar();
+            };
+            
+            window.selectEventDate = function(dateString, event) {
+                if (event) event.stopPropagation();
+                
+                const dateParts = dateString.split('-');
+                const date = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
+                
+                if (!selectedStartDate || (selectedStartDate && selectedEndDate)) {
+                    selectedStartDate = date;
+                    selectedEndDate = null;
+                } else if (date < selectedStartDate) {
+                    selectedEndDate = selectedStartDate;
+                    selectedStartDate = date;
+                } else if (date.getTime() === selectedStartDate.getTime()) {
+                    selectedStartDate = null;
+                    selectedEndDate = null;
+                } else {
+                    selectedEndDate = date;
+                }
+                
+                createEventCalendar();
+                updateStartTimeMin();
+            };
+            
+            window.clearEventDateRange = function(event) {
+                if (event) event.stopPropagation();
+                selectedStartDate = null;
+                selectedEndDate = null;
+                document.getElementById('eventDateRange').value = '';
+                document.getElementById('eventDateStart').value = '';
+                document.getElementById('eventDateEnd').value = '';
+                createEventCalendar();
+            };
+            
+            window.applyEventDateRange = function(event) {
+                if (event) event.stopPropagation();
+                
+                const eventDateRangeInput = document.getElementById('eventDateRange');
+                const eventDateStartInput = document.getElementById('eventDateStart');
+                const eventDateEndInput = document.getElementById('eventDateEnd');
+                
+                // Helper function to format date in local timezone (YYYY-MM-DD)
+                function formatDateForInput(date) {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                }
+                
+                if (selectedStartDate && selectedEndDate) {
+                    const startStr = selectedStartDate.toLocaleDateString('en-GB');
+                    const endStr = selectedEndDate.toLocaleDateString('en-GB');
+                    eventDateRangeInput.value = `${startStr} - ${endStr}`;
+                    eventDateStartInput.value = formatDateForInput(selectedStartDate);
+                    eventDateEndInput.value = formatDateForInput(selectedEndDate);
+                } else if (selectedStartDate) {
+                    eventDateRangeInput.value = selectedStartDate.toLocaleDateString('en-GB');
+                    eventDateStartInput.value = formatDateForInput(selectedStartDate);
+                    eventDateEndInput.value = '';
+                }
+                
+                // Validate the form field
+                validateField(eventDateRangeInput, () => selectedStartDate !== null, 'Event date is required');
+                
+                updateStartTimeMin();
+                updateEndTimeMin();
+                validateEndTime();
+            };
+            
+            // Real-time validation
+            const eventNameInput = document.getElementById('eventName');
+            const eventLocationInput = document.getElementById('eventLocation');
+            const eventTypeCheckboxes = document.querySelectorAll('.event-type-checkbox');
+            const eventTypeGroup = document.getElementById('eventTypeGroup');
+            const eventWebsiteInput = document.getElementById('eventWebsite');
+            
+            // Helper function to validate website URLs
+            function isValidWebsite(input) {
+                const value = input.trim();
+                if (value === '') return true; // Empty is allowed
+                
+                // Check if it's already a valid URL
+                try {
+                    new URL(value);
+                    return true;
+                } catch {
+                    // If not a URL, check if it's a valid domain format
+                    const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?\.[a-zA-Z]{2,}$/;
+                    return domainRegex.test(value);
+                }
+            }
+            
+            // Helper function to check if at least one event type is selected
+            function hasSelectedEventType() {
+                return Array.from(eventTypeCheckboxes).some(checkbox => checkbox.checked);
+            }
+            
+            if (eventNameInput) {
+                eventNameInput.addEventListener('blur', function() {
+                    validateField(this, 
+                        () => this.value.trim().length > 0, 
+                        'Event name is required'
+                    );
+                });
+            }
+            
+            if (eventLocationInput) {
+                eventLocationInput.addEventListener('blur', function() {
+                    validateField(this, 
+                        () => this.value.trim().length > 0, 
+                        'Event location is required'
+                    );
+                });
+            }
+            
+            if (eventDateRangeInput) {
+                eventDateRangeInput.addEventListener('blur', function() {
+                    validateField(this, 
+                        () => selectedStartDate !== null, 
+                        'Event date is required'
+                    );
+                });
+            }
+            
+            if (eventStartInput) {
+                eventStartInput.addEventListener('change', function() {
+                    validateField(this, 
+                        () => this.value !== '', 
+                        'Start time is required'
+                    );
+                });
+            }
+            
+            // Event type checkbox validation
+            if (eventTypeCheckboxes.length > 0) {
+                eventTypeCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        const formGroup = eventTypeGroup.closest('.form-group');
+                        if (hasSelectedEventType()) {
+                            formGroup.classList.remove('error');
+                            formGroup.classList.add('valid');
+                            const errorDiv = formGroup.querySelector('.error-message');
+                            if (errorDiv) errorDiv.textContent = '';
+                        } else {
+                            formGroup.classList.remove('valid');
+                            formGroup.classList.add('error');
+                            const errorDiv = formGroup.querySelector('.error-message');
+                            if (errorDiv) errorDiv.textContent = 'Please select at least one event type';
+                        }
+                    });
+                });
+            }
+            
+            if (eventWebsiteInput) {
+                eventWebsiteInput.addEventListener('blur', function() {
+                    if (this.value.trim() !== '') {
+                        validateField(this, 
+                            () => isValidWebsite(this.value), 
+                            'Please enter a valid website (e.g., tuska.fi or https://example.com)'
+                        );
+                    } else {
+                        // Clear validation if field is empty (since it's optional)
+                        const formGroup = this.closest('.form-group');
+                        formGroup.classList.remove('error', 'valid');
+                    }
+                });
+            }
+            
+            // Form submission validation
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+                
+                // Validate all required fields
+                const requiredFields = [
+                    { field: eventNameInput, message: 'Event name is required', validation: (f) => f.value.trim().length > 0 },
+                    { field: eventDateRangeInput, message: 'Event date is required', validation: (f) => selectedStartDate !== null },
+                    { field: eventStartInput, message: 'Start time is required', validation: (f) => f.value !== '' },
+                    { field: eventLocationInput, message: 'Event location is required', validation: (f) => f.value.trim().length > 0 }
+                ];
+                
+                // Validate event types separately
+                if (!hasSelectedEventType()) {
+                    const formGroup = eventTypeGroup.closest('.form-group');
+                    formGroup.classList.remove('valid');
+                    formGroup.classList.add('error');
+                    const errorDiv = formGroup.querySelector('.error-message');
+                    if (errorDiv) errorDiv.textContent = 'Please select at least one event type';
+                    isValid = false;
+                }
+                
+                requiredFields.forEach(({field, message, validation}) => {
+                    if (field && !validateField(field, () => validation(field), message)) {
+                        isValid = false;
+                    }
+                });
+                
+                // Validate website URL if provided
+                if (eventWebsiteInput && eventWebsiteInput.value.trim() !== '') {
+                    if (!isValidWebsite(eventWebsiteInput.value)) {
+                        validateField(eventWebsiteInput, () => false, 'Please enter a valid website (e.g., tuska.fi or https://example.com)');
+                        isValid = false;
+                    }
+                }
+                
+                // Validate end time is after start time if both are provided (only for same-day events)
+                if (eventStartInput && eventEndInput && 
+                    eventStartInput.value !== '' && eventEndInput.value !== '') {
+                    const startTime = eventStartInput.value;
+                    const endTime = eventEndInput.value;
+                    const isMultiDay = selectedStartDate && selectedEndDate && 
+                                     selectedStartDate.getTime() !== selectedEndDate.getTime();
+                    
+                    // Only validate time order for same-day events
+                    if (!isMultiDay && startTime >= endTime) {
+                        validateField(eventEndInput, () => false, 'End time must be after start time');
+                        isValid = false;
+                    }
+                }
+                
+                if (!isValid) {
+                    e.preventDefault();
+                    // Scroll to first error
+                    const firstError = document.querySelector('.form-group.error');
+                    if (firstError) {
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
