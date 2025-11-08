@@ -137,4 +137,30 @@ public class VoteService {
         event.setEventDownVote((int) downvotes);
         eventRepository.save(event);
     }
+    
+    /**
+     * Delete all votes by a user (for account deletion)
+     */
+    public void deleteAllVotesByUser(EHUser user) {
+        // Get all votes by the user to update event counters properly
+        java.util.List<Vote> userVotes = voteRepository.findAll().stream()
+            .filter(vote -> vote.getUser().equals(user))
+            .collect(java.util.stream.Collectors.toList());
+        
+        // Update event counters for each vote being deleted
+        for (Vote vote : userVotes) {
+            Event event = vote.getEvent();
+            if (vote.isUpvote()) {
+                event.setEventUpVote(Math.max(0, (event.getEventUpVote() != null ? event.getEventUpVote() : 0) - 1));
+            } else {
+                event.setEventDownVote(Math.max(0, (event.getEventDownVote() != null ? event.getEventDownVote() : 0) - 1));
+            }
+            eventRepository.save(event);
+        }
+        
+        // Delete all votes by the user
+        voteRepository.deleteAll(userVotes);
+        
+        System.out.println("Deleted " + userVotes.size() + " votes for user: " + user.getUsername());
+    }
 }

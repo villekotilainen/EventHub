@@ -153,4 +153,16 @@ public class PasswordResetService {
         return hasUpper && hasLower && hasDigit && hasSpecial;
     }
     
+    /**
+     * Clean up all password reset tokens for a user (for account deletion)
+     */
+    public void cleanupTokensForUser(EHUser user) {
+        try {
+            passwordResetTokenRepository.deleteByEhUser(user);
+            System.out.println("Cleaned up password reset tokens for user: " + user.getUsername());
+        } catch (Exception e) {
+            System.err.println("Error cleaning up tokens for user " + user.getUsername() + ": " + e.getMessage());
+        }
+    }
+    
 }

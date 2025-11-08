@@ -1026,4 +1026,67 @@ public class HomeController {
         }
     }
 
+    /**
+     * Handle account deletion
+     */
+    @PostMapping("/profile/delete")
+    public String deleteAccount(Authentication authentication,
+                               RedirectAttributes redirectAttributes,
+                               HttpServletRequest request) {
+        // Check if user is authenticated
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";
+        }
+        
+        String username = authentication.getName();
+        Optional<EHUser> userOptional = ehUserRepository.findByUsername(username);
+        
+        if (!userOptional.isPresent()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "User account not found.");
+            return "redirect:/";
+        }
+        
+        EHUser user = userOptional.get();
+        
+        try {
+            // Store user's name for farewell message
+            String firstName = user.getFirstname() != null ? user.getFirstname() : "User";
+            
+            // Delete all events created by this user first (to maintain referential integrity)
+            List<Event> userEvents = eventRepository.findByEHUserUsername(username);
+            if (!userEvents.isEmpty()) {
+                eventRepository.deleteAll(userEvents);
+                System.out.println("Deleted " + userEvents.size() + " events for user: " + username);
+            }
+            
+            // Delete all votes by this user
+            voteService.deleteAllVotesByUser(user);
+            
+            // Delete any password reset tokens for this user
+            passwordResetService.cleanupTokensForUser(user);
+            
+            // Finally, delete the user account
+            ehUserRepository.delete(user);
+            
+            // Invalidate the current session
+            request.getSession().invalidate();
+            
+            // Add farewell message
+            redirectAttributes.addFlashAttribute("successMessage", 
+                "👋 Goodbye " + firstName + "! Your account has been successfully deleted. Thank you for using EventHub!");
+            
+            System.out.println("Successfully deleted user account: " + username);
+            
+        } catch (Exception e) {
+            System.err.println("Error deleting user account: " + e.getMessage());
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                "An error occurred while deleting your account. Please try again or contact support.");
+            return "redirect:/profile";
+        }
+        
+        // Redirect to home page after successful deletion
+        return "redirect:/";
+    }
+
 }
