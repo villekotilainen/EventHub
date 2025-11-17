@@ -1010,9 +1010,6 @@ public class HomeController {
         }
     }
 
-    /**
-     * Handle account deletion
-     */
     @PostMapping("/profile/delete")
     public String deleteAccount(Authentication authentication,
                                RedirectAttributes redirectAttributes,
