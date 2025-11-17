@@ -922,27 +922,17 @@ public class HomeController {
         }
     }
     
-    // === PASSWORD RESET FUNCTIONALITY ===
-    
-    /**
-     * Show forgot password form
-     */
     @GetMapping("/forgot-password")
     public String showForgotPasswordForm(Model model) {
         return "forgotpassword";
     }
     
-    /**
-     * Handle forgot password form submission
-     */
     @PostMapping("/forgot-password")
     public String processForgotPassword(@RequestParam("email") String email, 
                                        HttpServletRequest request,
                                        Model model,
                                        RedirectAttributes redirectAttributes) {
         try {
-            // Use configured base URL instead of deriving from request
-            // This ensures correct URL generation in cloud environments
             String baseUrl = appBaseUrl;
             
             // Create reset token and send email
@@ -964,9 +954,6 @@ public class HomeController {
         }
     }
     
-    /**
-     * Show reset password form with token validation
-     */
     @GetMapping("/reset-password")
     public String showResetPasswordForm(@RequestParam("token") String token, Model model) {
         // Validate token
@@ -982,9 +969,6 @@ public class HomeController {
         return "resetpassword";
     }
     
-    /**
-     * Handle reset password form submission
-     */
     @PostMapping("/reset-password")
     public String processResetPassword(@RequestParam("token") String token,
                                       @RequestParam("newPassword") String newPassword,
